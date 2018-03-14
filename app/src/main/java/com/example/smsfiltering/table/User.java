@@ -16,10 +16,10 @@ public class User {
 
     private String phone;
 
-    private int password;
+    private String password;
 
-    @Generated(hash = 549429693)
-    public User(Long id, String phone, int password) {
+    @Generated(hash = 800558714)
+    public User(Long id, String phone, String password) {
         this.id = id;
         this.phone = phone;
         this.password = password;
@@ -45,12 +45,13 @@ public class User {
         this.phone = phone;
     }
 
-    public int getPassword() {
+    public String getPassword() {
         return this.password;
     }
 
-    public void setPassword(int password) {
+    public void setPassword(String password) {
         this.password = password;
     }
+
 
 }
