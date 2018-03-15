@@ -10,32 +10,28 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.example.smsfiltering.R;
-import com.example.smsfiltering.http.LtpCloud;
+import com.example.smsfiltering.base.BaseActivity;
 import com.example.smsfiltering.modules.fragment.BlacklistFragment;
 import com.example.smsfiltering.modules.fragment.InboxFragment;
 import com.example.smsfiltering.modules.fragment.MeFragment;
 import com.example.smsfiltering.modules.fragment.RubbishBoxFragment;
+import com.example.smsfiltering.modules.tag.TagMangerActivity;
 import com.example.smsfiltering.utils.SnackbarUtil;
 import com.zhy.autolayout.AutoLinearLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class Main2Activity extends AppCompatActivity
+public class Main2Activity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationBar.OnTabSelectedListener {
 
     @BindView(R.id.tb)
@@ -299,6 +295,7 @@ public class Main2Activity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
+            startNewActivity(TagMangerActivity.class, false);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -308,9 +305,10 @@ public class Main2Activity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-            String xxxx = LtpCloud.split("乐视网公告称，孙宏斌因工作安排调整原因向公司申请辞去乐视网董事长职务，退出董事会，并不再在乐视网担任任何职务。公司董事会充分尊重孙宏斌的个人意愿，接受其辞职申请。孙宏斌原定任期至2018年10月13日");
-            Toast.makeText(this, xxxx, Toast.LENGTH_SHORT).show();
+//            String xxxx = LtpCloud.split("乐视网公告称，孙宏斌因工作安排调整原因向公司申请辞去乐视网董事长职务，退出董事会，并不再在乐视网担任任何职务。公司董事会充分尊重孙宏斌的个人意愿，接受其辞职申请。孙宏斌原定任期至2018年10月13日");
+//            Toast.makeText(this, xxxx, Toast.LENGTH_SHORT).show();
 //            SnackbarUtil.showShortSnackbar(mParent, xxxx, SnackbarUtil.WHITE, SnackbarUtil.GREEN);
+            logout(Main2Activity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

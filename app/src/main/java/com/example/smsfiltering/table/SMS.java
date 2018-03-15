@@ -3,9 +3,6 @@ package com.example.smsfiltering.table;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 
-/**
- * Created by yinzhiyu on 2018-3-15.
- */
 @Entity
 public class SMS {
     private Long id;

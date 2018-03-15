@@ -101,7 +101,7 @@ public class InboxFragment extends BaseFragment {
             }
         });
         setLayoutManager();
-        recycleScroll();
+//        recycleScroll();
     }
 
     private void getData(int num) {

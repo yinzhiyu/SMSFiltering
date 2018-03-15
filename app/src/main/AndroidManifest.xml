@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.smsfiltering">
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".base.BaseApplication"
@@ -28,11 +29,13 @@
         <meta-data
             android:name="design_height"
             android:value="1280" />
-        <receiver android:name=".modules.SMSReceiveandMask" >
+
+        <receiver android:name=".modules.SMSReceiveandMask">
             <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
         <activity android:name=".modules.MainActivity" />
         <activity android:name=".modules.RegisteredActivity" />
         <activity android:name=".modules.LoginActivity" />
@@ -42,7 +45,8 @@
         <activity
             android:name=".modules.Main2Activity"
             android:label="@string/title_activity_main2"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".modules.tag.TagMangerActivity"></activity>
     </application>
 
 </manifest>
