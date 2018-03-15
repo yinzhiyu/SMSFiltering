@@ -134,6 +134,8 @@ public class LoginActivity extends BaseActivity {
                 if (db_phone.equals(phone)) {
                     if (db_pwd.equals(password)) {
                         SharePreferenceUtil.saveInfo2(LoginActivity.this, SharePreferenceUtil.ALIAS, true);
+                        SharePreferenceUtil.saveInfo(LoginActivity.this, SharePreferenceUtil.PHONE, phone);
+                        SharePreferenceUtil.saveInfo(LoginActivity.this, SharePreferenceUtil.PWD, password);
                         startNewActivity(MainActivity.class, true);
                         break;
                     } else {

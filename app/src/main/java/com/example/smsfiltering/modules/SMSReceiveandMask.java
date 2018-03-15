@@ -6,15 +6,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.smsfiltering.http.LtpCloud;
+import com.example.smsfiltering.base.BaseApplication;
+import com.example.smsfiltering.greendao.SMSDao;
+import com.example.smsfiltering.greendao.UserDao;
+import com.example.smsfiltering.table.SMS;
+import com.example.smsfiltering.table.User;
 import com.example.smsfiltering.utils.DateUtils;
+import com.example.smsfiltering.utils.SharePreferenceUtil;
+
+import java.util.List;
 
 
 public class SMSReceiveandMask extends BroadcastReceiver {
     private String TAG = "smsreceiveandmask";
-
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, ">>>>>>>onReceive start");
@@ -53,14 +58,14 @@ public class SMSReceiveandMask extends BroadcastReceiver {
                 String content = message[0].getMessageBody();
                 String sender = message[0].getOriginatingAddress();
                 long msgDate = message[0].getTimestampMillis();
-
-                String xxxx = LtpCloud.split(content);
-                String sdsdsd = DateUtils.timedate(String.valueOf(msgDate));
-                String smsToast = "New SMS received from : "
-                        + sender + "\n'"
-                        + content + "'" + xxxx + sdsdsd;
-                Toast.makeText(context, smsToast, Toast.LENGTH_LONG)
-                        .show();
+//                String xxxx = LtpCloud.split(content);
+                String timedate = DateUtils.timedate(String.valueOf(msgDate));
+                insertData(sender, content, timedate);
+//                String smsToast = "New SMS received from : "
+//                        + sender + "\n'"
+//                        + content + "'" + xxxx + sdsdsd;
+//                Toast.makeText(context, smsToast, Toast.LENGTH_LONG)
+//                        .show();
                 Log.d(TAG, "message from: " + sender + ", message body: " + content
                         + ", message date: " + msgDate);
                 //自己的逻辑
@@ -68,4 +73,29 @@ public class SMSReceiveandMask extends BroadcastReceiver {
         }
         Log.v(TAG, ">>>>>>>onReceive end");
     }
+
+//查
+
+    private Long queryData() {
+        UserDao mUserDao = BaseApplication.getInstance().getDaoSession().getUserDao();
+        List<User> users = mUserDao.loadAll();
+        Long id = null;
+        String phone = SharePreferenceUtil.getInfo(BaseApplication.getContext(), SharePreferenceUtil.PHONE);
+        for (int i = 0; i < users.size(); i++) {
+            if (phone.equals(users.get(i).getPhone())) {
+                id = users.get(i).getId();
+                break;
+            }
+        }
+        return id;
+    }
+    //增
+
+    private void insertData(String sender, String content, String time) {
+        SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
+        SMS insertData = new SMS(queryData(), sender, content, time,0,1);
+        smsDao.insert(insertData);
+    }
+
+
 }
