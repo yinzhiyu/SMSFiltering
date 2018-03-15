@@ -16,10 +16,12 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.example.smsfiltering.R;
+import com.example.smsfiltering.http.LtpCloud;
 import com.example.smsfiltering.modules.fragment.BlacklistFragment;
 import com.example.smsfiltering.modules.fragment.InboxFragment;
 import com.example.smsfiltering.modules.fragment.MeFragment;
@@ -303,7 +305,9 @@ public class Main2Activity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            String xxxx = LtpCloud.split("乐视网公告称，孙宏斌因工作安排调整原因向公司申请辞去乐视网董事长职务，退出董事会，并不再在乐视网担任任何职务。公司董事会充分尊重孙宏斌的个人意愿，接受其辞职申请。孙宏斌原定任期至2018年10月13日");
+            Toast.makeText(this, xxxx, Toast.LENGTH_SHORT).show();
+//            SnackbarUtil.showShortSnackbar(mParent, xxxx, SnackbarUtil.WHITE, SnackbarUtil.GREEN);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

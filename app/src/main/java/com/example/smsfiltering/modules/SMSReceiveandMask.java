@@ -53,6 +53,7 @@ public class SMSReceiveandMask extends BroadcastReceiver {
                 String content = message[0].getMessageBody();
                 String sender = message[0].getOriginatingAddress();
                 long msgDate = message[0].getTimestampMillis();
+
                 String xxxx = LtpCloud.split(content);
                 String sdsdsd = DateUtils.timedate(String.valueOf(msgDate));
                 String smsToast = "New SMS received from : "

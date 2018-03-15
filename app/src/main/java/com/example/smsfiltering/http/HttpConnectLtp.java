@@ -1,10 +1,9 @@
 package com.example.smsfiltering.http;
 
-import java.net.URL;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+import java.net.URL;
 /**
  * Created by yinzhiyu on 2018-3-14.
  */
@@ -28,12 +27,14 @@ public class HttpConnectLtp extends Thread{
     public void run(){
         URL url;
         try {
-            url = new URL("http://api.ltp-cloud.com/analysis/?"
+            url = new URL("https://api.ltp-cloud.com/analysis/?"
                     + "api_key=" + api_key + "&"
                     + "text=" + text + "&"
                     + "format=" + format + "&"
                     + "pattern=" + pattern);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setInstanceFollowRedirects(true);  //you still need to handle redirect manully.
+            HttpURLConnection.setFollowRedirects(true);
             conn.connect();
 
             BufferedReader innet = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
