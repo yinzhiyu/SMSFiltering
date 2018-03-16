@@ -10,9 +10,11 @@ import android.util.Log;
 import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.greendao.SMSDao;
 import com.example.smsfiltering.greendao.UserDao;
+import com.example.smsfiltering.http.LtpCloud;
 import com.example.smsfiltering.table.SMS;
 import com.example.smsfiltering.table.User;
 import com.example.smsfiltering.utils.DateUtils;
+import com.example.smsfiltering.utils.FilterUtil;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
 
 import java.util.List;
@@ -58,7 +60,14 @@ public class SMSReceiveandMask extends BroadcastReceiver {
                 String content = message[0].getMessageBody();
                 String sender = message[0].getOriginatingAddress();
                 long msgDate = message[0].getTimestampMillis();
-//                String xxxx = LtpCloud.split(content);
+
+                String content2 = FilterUtil.format(content);//去掉标点符号
+                String ltp = LtpCloud.split(content2);
+                String[] s = ltp.split(" ");
+                for (int i = 0; i < s.length; i++) {
+                    FilterUtil.appearNumber(ltp,s[i]);
+                }
+
                 String timedate = DateUtils.timedate(String.valueOf(msgDate));
                 insertData(sender, content, timedate);
 //                String smsToast = "New SMS received from : "

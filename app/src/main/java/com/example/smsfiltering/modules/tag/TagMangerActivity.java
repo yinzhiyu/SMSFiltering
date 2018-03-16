@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.greendao.KeyWordDao;
 import com.example.smsfiltering.table.KeyWord;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
+import com.example.smsfiltering.utils.SnackbarUtil;
 import com.zhy.view.flowlayout.FlowLayout;
 import com.zhy.view.flowlayout.TagAdapter;
 import com.zhy.view.flowlayout.TagFlowLayout;
@@ -47,21 +50,18 @@ public class TagMangerActivity extends AppCompatActivity {
     @BindView(R.id.btn_add)
     Button mBtnAdd;
     @BindView(R.id.search_page_flowlayout)
-    com.zhy.view.flowlayout.TagFlowLayout search_page_flowlayout;
+    TagFlowLayout search_page_flowlayout;
     //数据库相关
     MyAdapter myAdapter;
-    private KeyWordDao mKeyWordDao;
-    private String[] mVals = new String[]
-            {"Hello", "Android", "Weclome Hi ", "Button", "TextView", "Hello",
-                    "Android", "Weclome", "Button ImageView", "TextView", "Helloworld"};
+    @BindView(R.id.parent)
+    LinearLayout mParent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tag_manger);
         ButterKnife.bind(this);
-        mKeyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
         initToolBar();
-        initView();
+        getData();
     }
 
     /**
@@ -85,21 +85,21 @@ public class TagMangerActivity extends AppCompatActivity {
         });
     }
 
-    protected void initView() {
+    protected void initView(final List<KeyWord> mVals) {
         final LayoutInflater mInflater = LayoutInflater.from(TagMangerActivity.this);
-        search_page_flowlayout.setAdapter(new TagAdapter<String>(mVals) {
+        search_page_flowlayout.setAdapter(new TagAdapter(mVals) {
             @Override
-            public View getView(FlowLayout parent, int position, String s) {
+            public View getView(FlowLayout parent, int position, Object o) {
                 TextView tv = (TextView) mInflater.inflate(R.layout.search_page_flowlayout_tv,
                         search_page_flowlayout, false);
-                tv.setText(s);
+                tv.setText(mVals.get(position).getKeyword());
                 return tv;
             }
         });
         search_page_flowlayout.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
             @Override
             public boolean onTagClick(View view, int position, FlowLayout parent) {
-                Toast.makeText(TagMangerActivity.this, mVals[position], Toast.LENGTH_SHORT).show();
+                Toast.makeText(TagMangerActivity.this, mVals.get(position).getKeyword(), Toast.LENGTH_SHORT).show();
                 //view.setVisibility(View.GONE);
                 return true;
             }
@@ -110,21 +110,26 @@ public class TagMangerActivity extends AppCompatActivity {
                 TagMangerActivity.this.setTitle("choose:" + selectPosSet.toString());
             }
         });
-        getData();
     }
 
     private void getData() {
         KeyWordDao keyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
         List<KeyWord> smsList = keyWordDao.loadAll();
-        myAdapter = new MyAdapter(TagMangerActivity.this, smsList);
+        initView(smsList);
+//        myAdapter = new MyAdapter(TagMangerActivity.this, smsList);
     }
 
     @OnClick(R.id.btn_add)
     public void onViewClicked() {
         Long id = SharePreferenceUtil.getInfoLong(BaseApplication.getContext(), SharePreferenceUtil.ID);
         KeyWordDao keyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
-        KeyWord insertData = new KeyWord(id, mEtKeywords.getText().toString().trim());
-        keyWordDao.insert(insertData);
+        String keyword = mEtKeywords.getText().toString().trim();
+        if (!TextUtils.isEmpty(keyword)) {
+            KeyWord insertData = new KeyWord(id, keyword);
+            keyWordDao.insert(insertData);
+        } else {
+            SnackbarUtil.showLongSnackbar(mParent, "请填写关键字...", SnackbarUtil.WHITE, SnackbarUtil.ORANGE);
+        }
     }
 
     class MyAdapter extends BaseAdapter {
