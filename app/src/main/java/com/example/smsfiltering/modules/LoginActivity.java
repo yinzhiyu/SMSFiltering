@@ -15,6 +15,7 @@ import com.example.smsfiltering.base.BaseActivity;
 import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.greendao.UserDao;
 import com.example.smsfiltering.table.User;
+import com.example.smsfiltering.utils.DBUtil;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
 import com.example.smsfiltering.utils.SnackbarUtil;
 import com.zhy.autolayout.AutoLinearLayout;
@@ -133,9 +134,11 @@ public class LoginActivity extends BaseActivity {
                 sb.append(db_phone);
                 if (db_phone.equals(phone)) {
                     if (db_pwd.equals(password)) {
+                       Long id =  DBUtil.queryData();
                         SharePreferenceUtil.saveInfo2(LoginActivity.this, SharePreferenceUtil.ALIAS, true);
                         SharePreferenceUtil.saveInfo(LoginActivity.this, SharePreferenceUtil.PHONE, phone);
                         SharePreferenceUtil.saveInfo(LoginActivity.this, SharePreferenceUtil.PWD, password);
+                        SharePreferenceUtil.saveInfoLong(LoginActivity.this, SharePreferenceUtil.ID, id);
                         startNewActivity(MainActivity.class, true);
                         break;
                     } else {

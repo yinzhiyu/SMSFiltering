@@ -14,6 +14,7 @@ public class SharePreferenceUtil {
     public static final String ALIAS = "alias";
     public static final String PHONE = "phone";
     public static final String PWD = "pwd";
+    public static final String ID = "id";
     private static Context mContext = BaseApplication.getInstance();
 
     /**
@@ -47,6 +48,21 @@ public class SharePreferenceUtil {
     }
 
     /**
+     * 存储信息3
+     *
+     * @param context
+     * @param key     键
+     * @param value   值
+     */
+    public static void saveInfoLong(Context context, String key, Long value) {
+        SharedPreferences preferences;
+        preferences = mContext.getSharedPreferences("optimization", context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(key, value);
+        editor.commit();
+    }
+
+    /**
      * 获取信息
      *
      * @param context
@@ -71,6 +87,20 @@ public class SharePreferenceUtil {
         SharedPreferences preferences;
         preferences = mContext.getSharedPreferences("optimization", context.MODE_PRIVATE);
         translation = preferences.getBoolean(key, true);
+        return translation;
+    }
+
+    /**
+     * 获取信息
+     *
+     * @param context
+     * @param key     键
+     */
+    public static long getInfoLong(Context context, String key) {
+        long translation;
+        SharedPreferences preferences;
+        preferences = mContext.getSharedPreferences("optimization", context.MODE_PRIVATE);
+        translation = preferences.getLong(key, 1l);
         return translation;
     }
 

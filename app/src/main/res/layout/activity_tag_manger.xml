@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:zhy="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.example.smsfiltering.modules.tag.TagMangerActivity">
 
@@ -40,10 +41,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.heaven7.android.dragflowlayout.DragFlowLayout
-                android:id="@+id/drag_flowLayout"
+            <com.zhy.view.flowlayout.TagFlowLayout
+                android:layout_marginTop="15dp"
+                android:id="@+id/search_page_flowlayout"
+                zhy:max_select="1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"></com.heaven7.android.dragflowlayout.DragFlowLayout>
+                android:layout_height="wrap_content"/>
 
             <Button
                 android:layout_width="match_parent"

@@ -16,6 +16,7 @@ import com.example.smsfiltering.base.BaseActivity;
 import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.greendao.UserDao;
 import com.example.smsfiltering.table.User;
+import com.example.smsfiltering.utils.DBUtil;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
 import com.example.smsfiltering.utils.SnackbarUtil;
 
@@ -90,9 +91,11 @@ public class RegisteredActivity extends BaseActivity {
         }
         String phone = mEtPhone.getText().toString().trim();
         insertData(phone, password);
+        Long id = DBUtil.queryData();
         SharePreferenceUtil.saveInfo2(BaseApplication.getContext(), SharePreferenceUtil.ALIAS, true);
         SharePreferenceUtil.saveInfo(BaseApplication.getContext(), SharePreferenceUtil.PHONE, phone);
         SharePreferenceUtil.saveInfo(BaseApplication.getContext(), SharePreferenceUtil.PWD, password);
+        SharePreferenceUtil.saveInfoLong(BaseApplication.getContext(), SharePreferenceUtil.ID, id);
         startNewActivity(MainActivity.class, true);
     }
 
