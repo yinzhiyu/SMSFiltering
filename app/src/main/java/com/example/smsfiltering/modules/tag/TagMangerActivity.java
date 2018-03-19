@@ -55,6 +55,8 @@ public class TagMangerActivity extends AppCompatActivity {
     MyAdapter myAdapter;
     @BindView(R.id.parent)
     LinearLayout mParent;
+
+    private List<KeyWord> smsList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +116,7 @@ public class TagMangerActivity extends AppCompatActivity {
 
     private void getData() {
         KeyWordDao keyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
-        List<KeyWord> smsList = keyWordDao.loadAll();
+        smsList = keyWordDao.loadAll();
         initView(smsList);
 //        myAdapter = new MyAdapter(TagMangerActivity.this, smsList);
     }
@@ -127,6 +129,8 @@ public class TagMangerActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(keyword)) {
             KeyWord insertData = new KeyWord(id, keyword);
             keyWordDao.insert(insertData);
+//            myAdapter = new MyAdapter(TagMangerActivity.this, smsList);
+            getData();
         } else {
             SnackbarUtil.showLongSnackbar(mParent, "请填写关键字...", SnackbarUtil.WHITE, SnackbarUtil.ORANGE);
         }
