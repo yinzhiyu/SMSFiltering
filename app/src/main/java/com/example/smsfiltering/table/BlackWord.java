@@ -4,19 +4,21 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
- * 关键字拦截
+ * 垃圾短信集
  */
 @Entity
-public class KeyWord {
+public class BlackWord {
     private Long id;
     private String keyword;
-    @Generated(hash = 674720375)
-    public KeyWord(Long id, String keyword) {
+    private int number;
+    @Generated(hash = 1411647835)
+    public BlackWord(Long id, String keyword, int number) {
         this.id = id;
         this.keyword = keyword;
+        this.number = number;
     }
-    @Generated(hash = 617591908)
-    public KeyWord() {
+    @Generated(hash = 1744752256)
+    public BlackWord() {
     }
     public Long getId() {
         return this.id;
@@ -29,5 +31,11 @@ public class KeyWord {
     }
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+    public int getNumber() {
+        return this.number;
+    }
+    public void setNumber(int number) {
+        this.number = number;
     }
 }

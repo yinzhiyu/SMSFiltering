@@ -11,6 +11,8 @@ import com.example.smsfiltering.base.BaseApplication;
 
 public class SharePreferenceUtil {
     //用户alias
+    public static final String WHITENUM = "whiteNum";
+    public static final String BLACKNUM = "BlackNum";
     public static final String ALIAS = "alias";
     public static final String PHONE = "phone";
     public static final String PWD = "pwd";

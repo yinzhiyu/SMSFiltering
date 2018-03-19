@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.example.smsfiltering.modules.LoginActivity;
 import com.example.smsfiltering.utils.ActivityCollector;
 import com.example.smsfiltering.utils.CommonUtil;
+import com.example.smsfiltering.utils.FilterUtil;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
 
 /**
@@ -26,7 +27,6 @@ public class BaseActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//设置竖屏
         ActivityCollector.addActivity(this);
         mContext = this;
-
     }
 
     @Override

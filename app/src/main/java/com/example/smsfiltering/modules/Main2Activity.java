@@ -1,5 +1,6 @@
 package com.example.smsfiltering.modules;
 
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -21,14 +22,29 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.example.smsfiltering.R;
 import com.example.smsfiltering.base.BaseActivity;
+import com.example.smsfiltering.base.BaseApplication;
+import com.example.smsfiltering.greendao.BlackWordDao;
+import com.example.smsfiltering.greendao.KeyWordDao;
+import com.example.smsfiltering.greendao.SMSDao;
+import com.example.smsfiltering.greendao.UserDao;
+import com.example.smsfiltering.greendao.WhiteWordDao;
 import com.example.smsfiltering.http.LtpCloud;
 import com.example.smsfiltering.modules.fragment.BlacklistFragment;
 import com.example.smsfiltering.modules.fragment.InboxFragment;
 import com.example.smsfiltering.modules.fragment.MeFragment;
 import com.example.smsfiltering.modules.fragment.RubbishBoxFragment;
 import com.example.smsfiltering.modules.tag.TagMangerActivity;
+import com.example.smsfiltering.table.BlackWord;
+import com.example.smsfiltering.table.KeyWord;
+import com.example.smsfiltering.table.SMS;
+import com.example.smsfiltering.table.User;
+import com.example.smsfiltering.table.WhiteWord;
+import com.example.smsfiltering.utils.FilterUtil;
+import com.example.smsfiltering.utils.SharePreferenceUtil;
 import com.example.smsfiltering.utils.SnackbarUtil;
 import com.zhy.autolayout.AutoLinearLayout;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -78,6 +94,7 @@ public class Main2Activity extends BaseActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        new MyTask().execute();
     }
 
     private void initView() {
@@ -299,7 +316,73 @@ public class Main2Activity extends BaseActivity
             // Handle the camera action
             startNewActivity(TagMangerActivity.class, false);
         } else if (id == R.id.nav_gallery) {
+            String content = "论文积分借款遛狗别墅特殊";
+            String sender = "狗蛋er";
+            String timedate = "我叫时间";
+            int type = 1;
+            for (int i = 0; i < queryDataL().size(); i++) {
+                if (content.contains(queryDataL().get(i).getKeyword())) {
+                    insertData(sender, content, timedate, 0);
+                    type = 0;
+                    break;
+                }
+            }
+            if (type == 1) {
+                String content2 = FilterUtil.format(content);//去掉标点符号
+                String ltp = LtpCloud.split(content2);//分词
+                String[] s = ltp.split(" ");//截取根据" "分的词语
 
+                double bayes1 = 1;
+                double bayes2 = 1;
+                for (int i = 0; i < s.length; i++) {//循环，计算每个词语出现的次数，计算概率，加入到数据库
+                    //条件概率
+                    WhiteWordDao whiteWordDao = BaseApplication.getInstance().getDaoSession().getWhiteWordDao();
+                    BlackWordDao blackWordDao = BaseApplication.getInstance().getDaoSession().getBlackWordDao();
+                    List<WhiteWord> whiteWordsList = whiteWordDao.
+                            queryBuilder()
+                            .where(WhiteWordDao.Properties.Keyword.eq(s[i])).build().list();
+                    List<BlackWord> blackWordsList = blackWordDao.
+                            queryBuilder()
+                            .where(BlackWordDao.Properties.Keyword.eq(s[i])).list();
+
+                    double white, black;
+                    if (whiteWordsList.size() > 0) {
+                        white = (double) whiteWordsList.get(0).getNumber() / 200;
+                    } else {
+                        white = 1;
+                    }
+                    if (blackWordsList.size() > 0) {
+                        black = (double) blackWordsList.get(0).getNumber() / 200;
+                    } else {
+                        black = 1;
+                    }
+                    String xxx = s[i];
+                    double p = white / (white + black);//出现这个词时，该短信为垃圾短信的概率
+
+                    //全概率
+                    bayes1 = bayes1 * p;
+                    bayes2 = bayes2 * (1 - p);
+                }
+                double p = bayes1 / (bayes1 + bayes2);//复合概率
+                if (p > 0.8) {
+                    insertData(sender, content, timedate, 0);
+                } else {
+                    insertData(sender, content, timedate, 1);
+                }
+//                        .show();
+//                String timedate = DateUtils.timedate(String.valueOf(msgDate));
+//                insertData(sender, content, timedate);
+
+
+//                String smsToast = "New SMS received from : "
+//                        + sender + "\n'"
+//                        + content + "'" + xxxx + sdsdsd;
+//                Toast.makeText(context, smsToast, Toast.LENGTH_LONG)
+//                        .show();
+//                Log.d(TAG, "message from: " + sender + ", message body: " + content
+//                        + ", message date: " + msgDate);
+                //自己的逻辑
+            }
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -316,5 +399,54 @@ public class Main2Activity extends BaseActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    class MyTask extends AsyncTask<Integer, Integer, String> {
+
+        @Override
+        protected String doInBackground(Integer... integers) {
+            SharePreferenceUtil.saveInfo(Main2Activity.this, SharePreferenceUtil.BLACKNUM, "200");//黑名单
+            SharePreferenceUtil.saveInfo(Main2Activity.this, SharePreferenceUtil.WHITENUM, "200");//白名单
+            //查
+            WhiteWordDao smsDao = BaseApplication.getInstance().getDaoSession().getWhiteWordDao();
+            List<WhiteWord> users = smsDao.loadAll();
+            if (users.size() <= 0) {
+                FilterUtil.getBlackList(0);
+                FilterUtil.getBlackList(1);
+            }
+            return "fuck";
+        }
+    }
+
+    private Long queryData() {
+        UserDao mUserDao = BaseApplication.getInstance().getDaoSession().getUserDao();
+        List<User> users = mUserDao.loadAll();
+        Long id = null;
+        String phone = SharePreferenceUtil.getInfo(BaseApplication.getContext(), SharePreferenceUtil.PHONE);
+        for (int i = 0; i < users.size(); i++) {
+            if (phone.equals(users.get(i).getPhone())) {
+                id = users.get(i).getId();
+                break;
+            }
+        }
+        return id;
+    }
+
+//查
+
+    private List<KeyWord> queryDataL() {
+        KeyWordDao keyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
+        Long id = SharePreferenceUtil.getInfoLong(BaseApplication.getContext(), SharePreferenceUtil.ID);
+        List<KeyWord> users = keyWordDao.
+                queryBuilder()
+                .where(KeyWordDao.Properties.Id.eq(String.valueOf(id))).list();
+        return users;
+    }
+    //增
+
+    private void insertData(String sender, String content, String time, int userfulType) {
+        SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
+        SMS insertData = new SMS(queryData(), sender, content, time, 0, userfulType);
+        smsDao.insert(insertData);
     }
 }

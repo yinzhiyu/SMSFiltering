@@ -24,6 +24,8 @@ public class DaoMaster extends AbstractDaoMaster {
         KeyWordDao.createTable(db, ifNotExists);
         SMSDao.createTable(db, ifNotExists);
         UserDao.createTable(db, ifNotExists);
+        WhiteWordDao.createTable(db, ifNotExists);
+        BlackWordDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
@@ -31,6 +33,8 @@ public class DaoMaster extends AbstractDaoMaster {
         KeyWordDao.dropTable(db, ifExists);
         SMSDao.dropTable(db, ifExists);
         UserDao.dropTable(db, ifExists);
+        WhiteWordDao.dropTable(db, ifExists);
+        BlackWordDao.dropTable(db, ifExists);
     }
 
     /**
@@ -52,6 +56,8 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(KeyWordDao.class);
         registerDaoClass(SMSDao.class);
         registerDaoClass(UserDao.class);
+        registerDaoClass(WhiteWordDao.class);
+        registerDaoClass(BlackWordDao.class);
     }
 
     public DaoSession newSession() {

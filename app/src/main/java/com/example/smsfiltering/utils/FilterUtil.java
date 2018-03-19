@@ -1,6 +1,10 @@
 package com.example.smsfiltering.utils;
 
 import com.example.smsfiltering.base.BaseApplication;
+import com.example.smsfiltering.greendao.BlackWordDao;
+import com.example.smsfiltering.greendao.WhiteWordDao;
+import com.example.smsfiltering.table.BlackWord;
+import com.example.smsfiltering.table.WhiteWord;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -45,7 +49,72 @@ public class FilterUtil {
      * @param type
      */
     public static void getBlackList(int type) {
-        HashSet<String> hashSetBlackList = null;
+//        HashSet<String> hashSetBlackList = null;
+        try {
+            String fileName;
+            //读取文件，我的文件存放在assets目录下
+            if (type == 0) {
+                fileName = "BlackList";
+            } else {
+                fileName = "WhiteList";
+            }
+            InputStream is = BaseApplication.getInstance().getAssets().open(fileName);
+            if (is != null) {
+                InputStreamReader inputreader = new InputStreamReader(is);
+                BufferedReader buffreader = new BufferedReader(inputreader);
+//                if (hashSetBlackList != null) {
+//                    hashSetBlackList.clear();
+//                } else {
+//                    hashSetBlackList = new HashSet<String>();
+//                }
+
+                String line;
+                int recordNum = 0;
+                //分行读取
+                while ((line = buffreader.readLine()) != null) {
+                    recordNum++;
+                    //添加一条记录
+//                    hashSetBlackList.add(line);
+                    int index = line.indexOf(',');
+                    String keyword = line.substring(0, index);
+                    int number = Integer.parseInt(line.substring(index + 1));
+                    if (type == 0) {
+                        insertBData(keyword, number);
+                    } else {
+                        insertWData(keyword, number);
+                    }
+
+//                    if (recordNum % 10000 == 1) {//注意，过多的打印信息，会严重拖慢运行速度
+//                    }
+                }
+                is.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    //增
+
+    private static void insertWData(String keyWord, int number) {
+        WhiteWordDao smsDao = BaseApplication.getInstance().getDaoSession().getWhiteWordDao();
+        WhiteWord insertData = new WhiteWord(SharePreferenceUtil.getInfoLong(BaseApplication.getContext(), SharePreferenceUtil.ID), keyWord, number);
+        smsDao.insert(insertData);
+    }
+
+    private static void insertBData(String keyWord, int number) {
+        BlackWordDao blackWordDao = BaseApplication.getInstance().getDaoSession().getBlackWordDao();
+        BlackWord insertData = new BlackWord(SharePreferenceUtil.getInfoLong(BaseApplication.getContext(), SharePreferenceUtil.ID), keyWord, number);
+        blackWordDao.insert(insertData);
+    }
+
+    /**
+     * 黑名单：type为0
+     * 白名单：type为1
+     *
+     * @param type
+     */
+    public static void getBlackList1(int type) {
+//        HashSet<String> hashSetBlackList = null;
         try {
             String fileName;
             //读取文件，我的文件存放在assets目录下
@@ -58,11 +127,11 @@ public class FilterUtil {
             if (is != null) {
                 InputStreamReader inputreader = new InputStreamReader(is);
                 BufferedReader buffreader = new BufferedReader(inputreader);
-                if (hashSetBlackList != null) {
-                    hashSetBlackList.clear();
-                } else {
-                    hashSetBlackList = new HashSet<String>();
-                }
+//                if (hashSetBlackList != null) {
+//                    hashSetBlackList.clear();
+//                } else {
+//                    hashSetBlackList = new HashSet<String>();
+//                }
 
                 String line;
                 int recordNum = 0;
@@ -70,9 +139,10 @@ public class FilterUtil {
                 while ((line = buffreader.readLine()) != null) {
                     recordNum++;
                     //添加一条记录
-                    hashSetBlackList.add(line);
-                    if (recordNum % 10000 == 1) {//注意，过多的打印信息，会严重拖慢运行速度
-                    }
+//                    hashSetBlackList.add(line);
+
+//                    if (recordNum % 10000 == 1) {//注意，过多的打印信息，会严重拖慢运行速度
+//                    }
                 }
                 is.close();
             }

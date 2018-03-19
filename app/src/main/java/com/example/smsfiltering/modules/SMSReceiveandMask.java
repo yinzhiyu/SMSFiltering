@@ -8,11 +8,17 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.example.smsfiltering.base.BaseApplication;
+import com.example.smsfiltering.greendao.BlackWordDao;
+import com.example.smsfiltering.greendao.KeyWordDao;
 import com.example.smsfiltering.greendao.SMSDao;
 import com.example.smsfiltering.greendao.UserDao;
+import com.example.smsfiltering.greendao.WhiteWordDao;
 import com.example.smsfiltering.http.LtpCloud;
+import com.example.smsfiltering.table.BlackWord;
+import com.example.smsfiltering.table.KeyWord;
 import com.example.smsfiltering.table.SMS;
 import com.example.smsfiltering.table.User;
+import com.example.smsfiltering.table.WhiteWord;
 import com.example.smsfiltering.utils.DateUtils;
 import com.example.smsfiltering.utils.FilterUtil;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
@@ -60,27 +66,73 @@ public class SMSReceiveandMask extends BroadcastReceiver {
                 String content = message[0].getMessageBody();
                 String sender = message[0].getOriginatingAddress();
                 long msgDate = message[0].getTimestampMillis();
-
-                String content2 = FilterUtil.format(content);//去掉标点符号
-                String ltp = LtpCloud.split(content2);
-                String[] s = ltp.split(" ");
-                for (int i = 0; i < s.length; i++) {
-                    FilterUtil.appearNumber(ltp,s[i]);
-                }
-
                 String timedate = DateUtils.timedate(String.valueOf(msgDate));
-                insertData(sender, content, timedate);
+                int type = 1;
+                for (int i = 0; i < queryDataL().size(); i++) {
+                    if (content.contains(queryDataL().get(i).getKeyword())) {
+                        insertData(sender, content, timedate, 0);
+                        type = 0;
+                        break;
+                    }
+                }
+                if (type == 1) {
+                    String content2 = FilterUtil.format(content);//去掉标点符号
+                    String ltp = LtpCloud.split(content2);//分词
+                    String[] s = ltp.split(" ");//截取根据" "分的词语
+
+                    double bayes1 = 1;
+                    double bayes2 = 1;
+                    for (int i = 0; i < s.length; i++) {//循环，计算每个词语出现的次数，计算概率，加入到数据库
+                        //条件概率
+                        WhiteWordDao whiteWordDao = BaseApplication.getInstance().getDaoSession().getWhiteWordDao();
+                        BlackWordDao blackWordDao = BaseApplication.getInstance().getDaoSession().getBlackWordDao();
+                        List<WhiteWord> whiteWordsList = whiteWordDao.
+                                queryBuilder()
+                                .where(WhiteWordDao.Properties.Keyword.eq(s[i])).build().list();
+                        List<BlackWord> blackWordsList = blackWordDao.
+                                queryBuilder()
+                                .where(BlackWordDao.Properties.Keyword.eq(s[i])).list();
+
+                        double white, black;
+                        if (whiteWordsList.size() > 0) {
+                            white = (double) whiteWordsList.get(0).getNumber() / 200;
+                        } else {
+                            white = 1;
+                        }
+                        if (blackWordsList.size() > 0) {
+                            black = (double) blackWordsList.get(0).getNumber() / 200;
+                        } else {
+                            black = 1;
+                        }
+                        String xxx = s[i];
+                        double p = white / (white + black);//出现这个词时，该短信为垃圾短信的概率
+
+                        //全概率
+                        bayes1 = bayes1 * p;
+                        bayes2 = bayes2 * (1 - p);
+                    }
+                    double p = bayes1 / (bayes1 + bayes2);//复合概率
+                    if (p > 0.8) {
+                        insertData(sender, content, timedate, 0);
+                    } else {
+                        insertData(sender, content, timedate, 1);
+                    }
+//                        .show();
+//                String timedate = DateUtils.timedate(String.valueOf(msgDate));
+//                insertData(sender, content, timedate);
+
+
 //                String smsToast = "New SMS received from : "
 //                        + sender + "\n'"
 //                        + content + "'" + xxxx + sdsdsd;
 //                Toast.makeText(context, smsToast, Toast.LENGTH_LONG)
 //                        .show();
-                Log.d(TAG, "message from: " + sender + ", message body: " + content
-                        + ", message date: " + msgDate);
-                //自己的逻辑
+//                Log.d(TAG, "message from: " + sender + ", message body: " + content
+//                        + ", message date: " + msgDate);
+                    //自己的逻辑
+                }
             }
         }
-        Log.v(TAG, ">>>>>>>onReceive end");
     }
 
 //查
@@ -98,11 +150,22 @@ public class SMSReceiveandMask extends BroadcastReceiver {
         }
         return id;
     }
+
+//查
+
+    private List<KeyWord> queryDataL() {
+        KeyWordDao keyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
+        Long id = SharePreferenceUtil.getInfoLong(BaseApplication.getContext(), SharePreferenceUtil.ID);
+        List<KeyWord> users = keyWordDao.
+                queryBuilder()
+                .where(SMSDao.Properties.Id.eq(String.valueOf(id))).build().list();
+        return users;
+    }
     //增
 
-    private void insertData(String sender, String content, String time) {
+    private void insertData(String sender, String content, String time, int userfulType) {
         SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
-        SMS insertData = new SMS(queryData(), sender, content, time,0,1);
+        SMS insertData = new SMS(queryData(), sender, content, time, 0, userfulType);
         smsDao.insert(insertData);
     }
 
