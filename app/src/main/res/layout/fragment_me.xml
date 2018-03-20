@@ -1,13 +1,62 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/parent"
     android:layout_height="match_parent"
-   >
+    tools:context="com.example.smsfiltering.modules.LoginActivity"
+    tools:layout_editor_absoluteY="25dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.example.smsfiltering.view.ContainsEmojiEditText
+        android:id="@+id/et_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="200dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_grey_border"
+        android:gravity="top|left"
+        android:hint="期待您的宝贵意见和建议......"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btn_inbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="128dp"
+        android:layout_marginStart="68dp"
+        android:background="@color/color_4bacf0"
+        android:text="收件箱"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_rubbish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="46dp"
+        android:background="@color/color_4bacf0"
+        android:text="垃圾箱"
+        android:textColor="@color/white"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btn_inbox"
+        app:layout_constraintStart_toEndOf="@+id/btn_inbox" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="26dp"
+        android:textColor="@color/color_92a0a9"
+        android:textSize="16sp"
+        android:layout_marginTop="32dp"
+        android:text="添加测试短信"
+        app:layout_constraintBottom_toTopOf="@+id/btn_inbox"
+        app:layout_constraintEnd_toEndOf="@+id/btn_inbox"
+        app:layout_constraintTop_toBottomOf="@+id/et_content"
+        app:layout_constraintVertical_bias="0.51" />
+</android.support.constraint.ConstraintLayout>

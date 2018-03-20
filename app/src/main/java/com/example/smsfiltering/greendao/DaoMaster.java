@@ -21,20 +21,20 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
+        BlackWordDao.createTable(db, ifNotExists);
         KeyWordDao.createTable(db, ifNotExists);
         SMSDao.createTable(db, ifNotExists);
         UserDao.createTable(db, ifNotExists);
         WhiteWordDao.createTable(db, ifNotExists);
-        BlackWordDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
+        BlackWordDao.dropTable(db, ifExists);
         KeyWordDao.dropTable(db, ifExists);
         SMSDao.dropTable(db, ifExists);
         UserDao.dropTable(db, ifExists);
         WhiteWordDao.dropTable(db, ifExists);
-        BlackWordDao.dropTable(db, ifExists);
     }
 
     /**
@@ -53,11 +53,11 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
+        registerDaoClass(BlackWordDao.class);
         registerDaoClass(KeyWordDao.class);
         registerDaoClass(SMSDao.class);
         registerDaoClass(UserDao.class);
         registerDaoClass(WhiteWordDao.class);
-        registerDaoClass(BlackWordDao.class);
     }
 
     public DaoSession newSession() {

@@ -20,13 +20,15 @@ import com.example.smsfiltering.table.SMS;
 import java.util.List;
 
 
-public class InboxAdapter extends RecyclerView.Adapter {
+public class RubbishAdapter extends RecyclerView.Adapter {
     private final LayoutInflater mLayoutInflater;
     private final Context mContext;
     private IndoxHolder IndoxHolder;
     private List<SMS> list;
+
     private DelRefreshInterface mDelRefresh;
-    public InboxAdapter(Context context, List<SMS> list) {
+
+    public RubbishAdapter(Context context, List<SMS> list) {
         this.list = list;
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
@@ -80,7 +82,7 @@ public class InboxAdapter extends RecyclerView.Adapter {
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
                                     smsDao.delete(sms);
-                                    mDelRefresh.refreshInbox();
+                                    mDelRefresh.refreshRubbish();
                                 }
                             })
                             .show();
@@ -110,5 +112,4 @@ public class InboxAdapter extends RecyclerView.Adapter {
 
         }
     }
-
 }

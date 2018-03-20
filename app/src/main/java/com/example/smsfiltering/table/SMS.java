@@ -1,19 +1,23 @@
 package com.example.smsfiltering.table;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class SMS {
+    @Id(autoincrement = true)
+    private Long smsId;
     private Long id;
     private String sender;
     private String content;
     private String time;
     private int readType;
     private int usefulType;
-    @Generated(hash = 799803224)
-    public SMS(Long id, String sender, String content, String time, int readType,
-            int usefulType) {
+    @Generated(hash = 555623080)
+    public SMS(Long smsId, Long id, String sender, String content, String time,
+            int readType, int usefulType) {
+        this.smsId = smsId;
         this.id = id;
         this.sender = sender;
         this.content = content;
@@ -23,6 +27,12 @@ public class SMS {
     }
     @Generated(hash = 2144275990)
     public SMS() {
+    }
+    public Long getSmsId() {
+        return this.smsId;
+    }
+    public void setSmsId(Long smsId) {
+        this.smsId = smsId;
     }
     public Long getId() {
         return this.id;

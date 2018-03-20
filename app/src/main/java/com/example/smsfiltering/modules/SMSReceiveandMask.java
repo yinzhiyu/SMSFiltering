@@ -165,7 +165,7 @@ public class SMSReceiveandMask extends BroadcastReceiver {
 
     private void insertData(String sender, String content, String time, int userfulType) {
         SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
-        SMS insertData = new SMS(queryData(), sender, content, time, 0, userfulType);
+        SMS insertData = new SMS(null,queryData(), sender, content, time, 0, userfulType);
         smsDao.insert(insertData);
     }
 

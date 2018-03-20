@@ -18,25 +18,24 @@
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/toolbar_home"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
         android:background="@color/white"
         android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/box_unll" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="收件箱"
-            android:textColor="@color/color_2B2B2B"
-            android:textSize="20sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_alignParentBottom="true"
-            android:background="@color/color_EDEEF0" />
-    </RelativeLayout>
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:text="还没有邮件哦..." />
+    </LinearLayout>
 </LinearLayout>

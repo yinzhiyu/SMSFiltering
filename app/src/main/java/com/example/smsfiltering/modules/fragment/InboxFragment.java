@@ -11,14 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 
 import com.example.smsfiltering.R;
 import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.base.BaseFragment;
 import com.example.smsfiltering.greendao.SMSDao;
+import com.example.smsfiltering.modules.adapter.DelRefreshInterface;
 import com.example.smsfiltering.modules.adapter.InboxAdapter;
 import com.example.smsfiltering.table.SMS;
+import com.example.smsfiltering.utils.SharePreferenceUtil;
+import com.example.smsfiltering.view.DividerListItemDecoration;
 
 import java.util.List;
 
@@ -30,13 +33,14 @@ import butterknife.OnClick;
  * 收件箱BlacklistFragment
  */
 
-public class InboxFragment extends BaseFragment {
+public class InboxFragment extends BaseFragment implements DelRefreshInterface {
     @BindView(R.id.rv_home_recycler)
     RecyclerView rvHomeRecycler;
     @BindView(R.id.srl_home_swipe_refresh)
     SwipeRefreshLayout srlHomeSwipeRefresh;
     @BindView(R.id.toolbar_home)
-    RelativeLayout toolbar_home;
+    LinearLayout toolbar_home;
+
 
     private boolean isShowToolbar = true;
     //--------------------
@@ -44,7 +48,7 @@ public class InboxFragment extends BaseFragment {
     private LinearLayoutManager layoutManager;
     private boolean isShow = true;
     private int totalScrollDistance;
-    private int pageNum;
+    private int pageNum = 1;
     private InboxAdapter mInboxAdapter;
     public static InboxFragment newInstance(String content) {
         Bundle args = new Bundle();
@@ -53,6 +57,7 @@ public class InboxFragment extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Nullable
     @Override
@@ -77,6 +82,7 @@ public class InboxFragment extends BaseFragment {
                 getData(pageNum);
             }
         });
+//        recycleScroll();
         rvHomeRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -101,17 +107,37 @@ public class InboxFragment extends BaseFragment {
             }
         });
         setLayoutManager();
-//        recycleScroll();
+        getData(pageNum);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getData(pageNum);
     }
 
     private void getData(int num) {
         SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
-        List<SMS> smsList = smsDao.loadAll();
+        List<SMS> smsList = smsDao.queryBuilder()
+                .where(SMSDao.Properties.Id.eq(SharePreferenceUtil.getInfoLong(getActivity(), SharePreferenceUtil.ID)), SMSDao.Properties.UsefulType.eq("1")).build().list();
         if (srlHomeSwipeRefresh != null) {
             srlHomeSwipeRefresh.setRefreshing(false);
         }
-        mInboxAdapter = new InboxAdapter(BaseApplication.getContext(), smsList);
-        rvHomeRecycler.setAdapter(mInboxAdapter);
+        if (pageNum == 1) {
+            if (smsList.size() > 0) {
+                toolbar_home.setVisibility(View.GONE);
+                srlHomeSwipeRefresh.setVisibility(View.VISIBLE);
+                mInboxAdapter = new InboxAdapter(getActivity(), smsList);
+                mInboxAdapter.setCallback(new InboxFragment());
+                rvHomeRecycler.setAdapter(mInboxAdapter);
+            } else {
+                toolbar_home.setVisibility(View.VISIBLE);
+            }
+        } else {
+
+            mInboxAdapter.notifityData(smsList);
+        }
+
 
     }
     private void hide() {
@@ -191,7 +217,16 @@ public class InboxFragment extends BaseFragment {
         rvHomeRecycler.setLayoutManager(layoutManager);
         rvHomeRecycler.setItemAnimator(new DefaultItemAnimator());
         rvHomeRecycler.setHasFixedSize(true);
-        rvHomeRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));//这里用线性显示 类似于listview
-//        rvHomeRecycler.addItemDecoration(new DividerListItemDecoration(this, R.drawable.shape_divide_line));
+        rvHomeRecycler.addItemDecoration(new DividerListItemDecoration(getActivity(), R.drawable.shape_divide_line));
+    }
+
+    @Override
+    public void refreshRubbish() {
+
+    }
+
+    @Override
+    public void refreshInbox() {
+        getData(pageNum);
     }
 }

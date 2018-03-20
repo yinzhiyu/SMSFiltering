@@ -127,7 +127,7 @@ public class Main2Activity extends BaseActivity
                 .addItem(new BottomNavigationItem(R.drawable.home_s, "收件箱").setInactiveIcon(getResources().getDrawable(R.drawable.home_n)))
                 .addItem(new BottomNavigationItem(R.drawable.touzi_s, "垃圾箱").setInactiveIcon(getResources().getDrawable(R.drawable.touzi_n)))
                 .addItem(new BottomNavigationItem(R.drawable.wode_s, "黑名单").setInactiveIcon(getResources().getDrawable(R.drawable.wode_n)))
-                .addItem(new BottomNavigationItem(R.drawable.gengduo_s, "设置").setInactiveIcon(getResources().getDrawable(R.drawable.gengduo_n)))
+                .addItem(new BottomNavigationItem(R.drawable.gengduo_s, "其他").setInactiveIcon(getResources().getDrawable(R.drawable.gengduo_n)))
                 .setFirstSelectedPosition(lastSelectedPosition)
                 .initialise();
         // TODO 设置 BadgeItem 默认隐藏 注意 这句代码在添加 BottomNavigationItem 之后
@@ -446,7 +446,7 @@ public class Main2Activity extends BaseActivity
 
     private void insertData(String sender, String content, String time, int userfulType) {
         SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
-        SMS insertData = new SMS(queryData(), sender, content, time, 0, userfulType);
+        SMS insertData = new SMS(null,queryData(), sender, content, time, 0, userfulType);
         smsDao.insert(insertData);
     }
 }

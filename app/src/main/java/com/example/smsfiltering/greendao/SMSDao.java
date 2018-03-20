@@ -15,7 +15,7 @@ import com.example.smsfiltering.table.SMS;
 /** 
  * DAO for table "SMS".
 */
-public class SMSDao extends AbstractDao<SMS, Void> {
+public class SMSDao extends AbstractDao<SMS, Long> {
 
     public static final String TABLENAME = "SMS";
 
@@ -24,12 +24,13 @@ public class SMSDao extends AbstractDao<SMS, Void> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, Long.class, "id", false, "ID");
-        public final static Property Sender = new Property(1, String.class, "sender", false, "SENDER");
-        public final static Property Content = new Property(2, String.class, "content", false, "CONTENT");
-        public final static Property Time = new Property(3, String.class, "time", false, "TIME");
-        public final static Property ReadType = new Property(4, int.class, "readType", false, "READ_TYPE");
-        public final static Property UsefulType = new Property(5, int.class, "usefulType", false, "USEFUL_TYPE");
+        public final static Property SmsId = new Property(0, Long.class, "smsId", true, "_id");
+        public final static Property Id = new Property(1, Long.class, "id", false, "ID");
+        public final static Property Sender = new Property(2, String.class, "sender", false, "SENDER");
+        public final static Property Content = new Property(3, String.class, "content", false, "CONTENT");
+        public final static Property Time = new Property(4, String.class, "time", false, "TIME");
+        public final static Property ReadType = new Property(5, int.class, "readType", false, "READ_TYPE");
+        public final static Property UsefulType = new Property(6, int.class, "usefulType", false, "USEFUL_TYPE");
     }
 
 
@@ -45,12 +46,13 @@ public class SMSDao extends AbstractDao<SMS, Void> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"SMS\" (" + //
-                "\"ID\" INTEGER," + // 0: id
-                "\"SENDER\" TEXT," + // 1: sender
-                "\"CONTENT\" TEXT," + // 2: content
-                "\"TIME\" TEXT," + // 3: time
-                "\"READ_TYPE\" INTEGER NOT NULL ," + // 4: readType
-                "\"USEFUL_TYPE\" INTEGER NOT NULL );"); // 5: usefulType
+                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: smsId
+                "\"ID\" INTEGER," + // 1: id
+                "\"SENDER\" TEXT," + // 2: sender
+                "\"CONTENT\" TEXT," + // 3: content
+                "\"TIME\" TEXT," + // 4: time
+                "\"READ_TYPE\" INTEGER NOT NULL ," + // 5: readType
+                "\"USEFUL_TYPE\" INTEGER NOT NULL );"); // 6: usefulType
     }
 
     /** Drops the underlying database table. */
@@ -63,99 +65,114 @@ public class SMSDao extends AbstractDao<SMS, Void> {
     protected final void bindValues(DatabaseStatement stmt, SMS entity) {
         stmt.clearBindings();
  
+        Long smsId = entity.getSmsId();
+        if (smsId != null) {
+            stmt.bindLong(1, smsId);
+        }
+ 
         Long id = entity.getId();
         if (id != null) {
-            stmt.bindLong(1, id);
+            stmt.bindLong(2, id);
         }
  
         String sender = entity.getSender();
         if (sender != null) {
-            stmt.bindString(2, sender);
+            stmt.bindString(3, sender);
         }
  
         String content = entity.getContent();
         if (content != null) {
-            stmt.bindString(3, content);
+            stmt.bindString(4, content);
         }
  
         String time = entity.getTime();
         if (time != null) {
-            stmt.bindString(4, time);
+            stmt.bindString(5, time);
         }
-        stmt.bindLong(5, entity.getReadType());
-        stmt.bindLong(6, entity.getUsefulType());
+        stmt.bindLong(6, entity.getReadType());
+        stmt.bindLong(7, entity.getUsefulType());
     }
 
     @Override
     protected final void bindValues(SQLiteStatement stmt, SMS entity) {
         stmt.clearBindings();
  
+        Long smsId = entity.getSmsId();
+        if (smsId != null) {
+            stmt.bindLong(1, smsId);
+        }
+ 
         Long id = entity.getId();
         if (id != null) {
-            stmt.bindLong(1, id);
+            stmt.bindLong(2, id);
         }
  
         String sender = entity.getSender();
         if (sender != null) {
-            stmt.bindString(2, sender);
+            stmt.bindString(3, sender);
         }
  
         String content = entity.getContent();
         if (content != null) {
-            stmt.bindString(3, content);
+            stmt.bindString(4, content);
         }
  
         String time = entity.getTime();
         if (time != null) {
-            stmt.bindString(4, time);
+            stmt.bindString(5, time);
         }
-        stmt.bindLong(5, entity.getReadType());
-        stmt.bindLong(6, entity.getUsefulType());
+        stmt.bindLong(6, entity.getReadType());
+        stmt.bindLong(7, entity.getUsefulType());
     }
 
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     @Override
     public SMS readEntity(Cursor cursor, int offset) {
         SMS entity = new SMS( //
-            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // sender
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // content
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // time
-            cursor.getInt(offset + 4), // readType
-            cursor.getInt(offset + 5) // usefulType
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // smsId
+            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // id
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // sender
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // content
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // time
+            cursor.getInt(offset + 5), // readType
+            cursor.getInt(offset + 6) // usefulType
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, SMS entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setSender(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setContent(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setTime(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setReadType(cursor.getInt(offset + 4));
-        entity.setUsefulType(cursor.getInt(offset + 5));
+        entity.setSmsId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
+        entity.setSender(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setContent(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setTime(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setReadType(cursor.getInt(offset + 5));
+        entity.setUsefulType(cursor.getInt(offset + 6));
      }
     
     @Override
-    protected final Void updateKeyAfterInsert(SMS entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected final Long updateKeyAfterInsert(SMS entity, long rowId) {
+        entity.setSmsId(rowId);
+        return rowId;
     }
     
     @Override
-    public Void getKey(SMS entity) {
-        return null;
+    public Long getKey(SMS entity) {
+        if(entity != null) {
+            return entity.getSmsId();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasKey(SMS entity) {
-        // TODO
-        return false;
+        return entity.getSmsId() != null;
     }
 
     @Override
