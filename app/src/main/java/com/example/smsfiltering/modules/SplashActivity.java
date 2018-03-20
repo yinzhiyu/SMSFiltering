@@ -23,7 +23,7 @@ public class SplashActivity extends BaseActivity {
 
                 if (SharePreferenceUtil.getInfo1(BaseApplication.getContext(), SharePreferenceUtil.ALIAS)) {
 //                    startNewActivity(MainActivity.class, true);
-                    startNewActivity(Main2Activity.class, true);
+                    startNewActivity(MainActivity.class, true);
                 } else {
                     startNewActivity(LoginActivity.class, true);
                 }

@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.smsfiltering.R;
 import com.example.smsfiltering.base.BaseApplication;
@@ -40,8 +38,8 @@ public class RubbishBoxFragment extends BaseFragment implements DelRefreshInterf
     RecyclerView rvHomeRecycler;
     @BindView(R.id.srl_home_swipe_refresh)
     SwipeRefreshLayout srlHomeSwipeRefresh;
-    @BindView(R.id.toolbar_home)
-    LinearLayout toolbar_home;
+    @BindView(R.id.ll_null)
+    LinearLayout mLlNull;
 
     private boolean isShowToolbar = true;
     //--------------------
@@ -98,10 +96,10 @@ public class RubbishBoxFragment extends BaseFragment implements DelRefreshInterf
                 super.onScrolled(recyclerView, dx, dy);
                 try {
                     totalScrollDistance += dy;
-                    if (totalScrollDistance > SCROLL_DISTANCE && toolbar_home.getVisibility() == View.GONE) {
+                    if (totalScrollDistance > SCROLL_DISTANCE && mLlNull.getVisibility() == View.GONE) {
                         show();
                         isShowToolbar = false;
-                    } else if (totalScrollDistance < SCROLL_DISTANCE && toolbar_home.getVisibility() == View.VISIBLE) {
+                    } else if (totalScrollDistance < SCROLL_DISTANCE && mLlNull.getVisibility() == View.VISIBLE) {
                         hide();
                         isShowToolbar = true;
                     }
@@ -130,13 +128,14 @@ public class RubbishBoxFragment extends BaseFragment implements DelRefreshInterf
         }
         if (pageNum == 1) {
             if (smsList.size() > 0) {
-                toolbar_home.setVisibility(View.GONE);
+                mLlNull.setVisibility(View.GONE);
                 srlHomeSwipeRefresh.setVisibility(View.VISIBLE);
                 mRubbishAdapter = new RubbishAdapter(getActivity(), smsList);
                 mRubbishAdapter.setCallback(new RubbishBoxFragment());
                 rvHomeRecycler.setAdapter(mRubbishAdapter);
             } else {
-                toolbar_home.setVisibility(View.VISIBLE);
+                srlHomeSwipeRefresh.setVisibility(View.GONE);
+                mLlNull.setVisibility(View.VISIBLE);
             }
 
         } else {
@@ -151,8 +150,8 @@ public class RubbishBoxFragment extends BaseFragment implements DelRefreshInterf
         AlphaAnimation alphaAnimation = new AlphaAnimation(1f, 0f);
         alphaAnimation.setDuration(1000);
         setAnimation.addAnimation(alphaAnimation);
-        toolbar_home.startAnimation(setAnimation);
-        toolbar_home.setVisibility(View.GONE);
+        mLlNull.startAnimation(setAnimation);
+        mLlNull.setVisibility(View.GONE);
     }
 
     private void show() {
@@ -161,8 +160,8 @@ public class RubbishBoxFragment extends BaseFragment implements DelRefreshInterf
         AlphaAnimation alphaAnimation = new AlphaAnimation(0f, 1f);
         alphaAnimation.setDuration(1500);
         setAnimation.addAnimation(alphaAnimation);
-        toolbar_home.startAnimation(setAnimation);
-        toolbar_home.setVisibility(View.VISIBLE);
+        mLlNull.startAnimation(setAnimation);
+        mLlNull.setVisibility(View.VISIBLE);
     }
 
     @OnClick({R.id.rv_home_recycler, R.id.srl_home_swipe_refresh})

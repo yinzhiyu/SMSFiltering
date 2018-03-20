@@ -36,14 +36,13 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".modules.MainActivity" />
         <activity android:name=".modules.RegisteredActivity" />
         <activity android:name=".modules.LoginActivity" />
         <activity
             android:name=".modules.BottomActivity"
             android:label="@string/title_activity_bottom" />
         <activity
-            android:name=".modules.Main2Activity"
+            android:name=".modules.MainActivity"
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme" />
         <activity android:name=".modules.tag.TagMangerActivity"></activity>

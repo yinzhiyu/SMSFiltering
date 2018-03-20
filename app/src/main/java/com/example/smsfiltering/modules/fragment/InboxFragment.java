@@ -38,8 +38,8 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
     RecyclerView rvHomeRecycler;
     @BindView(R.id.srl_home_swipe_refresh)
     SwipeRefreshLayout srlHomeSwipeRefresh;
-    @BindView(R.id.toolbar_home)
-    LinearLayout toolbar_home;
+    @BindView(R.id.ll_null)
+    LinearLayout mLlNull;
 
 
     private boolean isShowToolbar = true;
@@ -50,6 +50,7 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
     private int totalScrollDistance;
     private int pageNum = 1;
     private InboxAdapter mInboxAdapter;
+
     public static InboxFragment newInstance(String content) {
         Bundle args = new Bundle();
         args.putString("ARGS", content);
@@ -58,6 +59,8 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
         return fragment;
     }
 
+    public InboxFragment() {
+    }
 
     @Nullable
     @Override
@@ -94,10 +97,10 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
                 super.onScrolled(recyclerView, dx, dy);
                 try {
                     totalScrollDistance += dy;
-                    if (totalScrollDistance > SCROLL_DISTANCE && toolbar_home.getVisibility() == View.GONE) {
+                    if (totalScrollDistance > SCROLL_DISTANCE && mLlNull.getVisibility() == View.GONE) {
                         show();
                         isShowToolbar = false;
-                    } else if (totalScrollDistance < SCROLL_DISTANCE && toolbar_home.getVisibility() == View.VISIBLE) {
+                    } else if (totalScrollDistance < SCROLL_DISTANCE && mLlNull.getVisibility() == View.VISIBLE) {
                         hide();
                         isShowToolbar = true;
                     }
@@ -125,13 +128,14 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
         }
         if (pageNum == 1) {
             if (smsList.size() > 0) {
-                toolbar_home.setVisibility(View.GONE);
+                mLlNull.setVisibility(View.GONE);
                 srlHomeSwipeRefresh.setVisibility(View.VISIBLE);
                 mInboxAdapter = new InboxAdapter(getActivity(), smsList);
                 mInboxAdapter.setCallback(new InboxFragment());
                 rvHomeRecycler.setAdapter(mInboxAdapter);
             } else {
-                toolbar_home.setVisibility(View.VISIBLE);
+                srlHomeSwipeRefresh.setVisibility(View.GONE);
+                mLlNull.setVisibility(View.VISIBLE);
             }
         } else {
 
@@ -140,14 +144,15 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
 
 
     }
+
     private void hide() {
         // 组合动画设置-title动画消失
         AnimationSet setAnimation = new AnimationSet(true);
         AlphaAnimation alphaAnimation = new AlphaAnimation(1f, 0f);
         alphaAnimation.setDuration(1000);
         setAnimation.addAnimation(alphaAnimation);
-        toolbar_home.startAnimation(setAnimation);
-        toolbar_home.setVisibility(View.GONE);
+        mLlNull.startAnimation(setAnimation);
+        mLlNull.setVisibility(View.GONE);
     }
 
     private void show() {
@@ -156,8 +161,8 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
         AlphaAnimation alphaAnimation = new AlphaAnimation(0f, 1f);
         alphaAnimation.setDuration(1500);
         setAnimation.addAnimation(alphaAnimation);
-        toolbar_home.startAnimation(setAnimation);
-        toolbar_home.setVisibility(View.VISIBLE);
+        mLlNull.startAnimation(setAnimation);
+        mLlNull.setVisibility(View.VISIBLE);
     }
 
     @OnClick({R.id.rv_home_recycler, R.id.srl_home_swipe_refresh})
@@ -229,4 +234,5 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
     public void refreshInbox() {
         getData(pageNum);
     }
+
 }

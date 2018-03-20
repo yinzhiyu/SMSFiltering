@@ -1,30 +1,55 @@
 package com.example.smsfiltering.modules;
 
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.example.smsfiltering.R;
 import com.example.smsfiltering.base.BaseActivity;
-import com.example.smsfiltering.modules.fragment.BlacklistFragment;
+import com.example.smsfiltering.base.BaseApplication;
+import com.example.smsfiltering.greendao.BlackWordDao;
+import com.example.smsfiltering.greendao.KeyWordDao;
+import com.example.smsfiltering.greendao.SMSDao;
+import com.example.smsfiltering.greendao.UserDao;
+import com.example.smsfiltering.greendao.WhiteWordDao;
+import com.example.smsfiltering.http.LtpCloud;
 import com.example.smsfiltering.modules.fragment.InboxFragment;
 import com.example.smsfiltering.modules.fragment.MeFragment;
 import com.example.smsfiltering.modules.fragment.RubbishBoxFragment;
+import com.example.smsfiltering.modules.tag.TagMangerActivity;
+import com.example.smsfiltering.table.BlackWord;
+import com.example.smsfiltering.table.KeyWord;
+import com.example.smsfiltering.table.SMS;
+import com.example.smsfiltering.table.User;
+import com.example.smsfiltering.table.WhiteWord;
+import com.example.smsfiltering.utils.FilterUtil;
+import com.example.smsfiltering.utils.SharePreferenceUtil;
 import com.example.smsfiltering.utils.SnackbarUtil;
 import com.zhy.autolayout.AutoLinearLayout;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener {
-
+public class MainActivity extends BaseActivity
+        implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationBar.OnTabSelectedListener {
 
     @BindView(R.id.tb)
     FrameLayout mTb;
@@ -37,18 +62,37 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     //      private BadgeItem mHomeNumberBadgeItem, mMusicNumberBadgeItem;
     private InboxFragment mInboxFragment;
     private RubbishBoxFragment mRubbishBoxFragment;
-    private BlacklistFragment mBlacklistFragment;
     private MeFragment mMeFragment;
     private int lastSelectedPosition;
-    private int tabIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
         ButterKnife.bind(this);
         initView();
         setDefaultFragment();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        new MyTask().execute();
     }
 
     private void initView() {
@@ -80,8 +124,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         bottomNavigationBar
                 .addItem(new BottomNavigationItem(R.drawable.home_s, "收件箱").setInactiveIcon(getResources().getDrawable(R.drawable.home_n)))
                 .addItem(new BottomNavigationItem(R.drawable.touzi_s, "垃圾箱").setInactiveIcon(getResources().getDrawable(R.drawable.touzi_n)))
-                .addItem(new BottomNavigationItem(R.drawable.wode_s, "黑名单").setInactiveIcon(getResources().getDrawable(R.drawable.wode_n)))
-                .addItem(new BottomNavigationItem(R.drawable.gengduo_s, "设置").setInactiveIcon(getResources().getDrawable(R.drawable.gengduo_n)))
+                .addItem(new BottomNavigationItem(R.drawable.gengduo_s, "其他").setInactiveIcon(getResources().getDrawable(R.drawable.gengduo_n)))
                 .setFirstSelectedPosition(lastSelectedPosition)
                 .initialise();
         // TODO 设置 BadgeItem 默认隐藏 注意 这句代码在添加 BottomNavigationItem 之后
@@ -135,16 +178,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 }
                 break;
             case 2:
-                //原始逻辑
-                if (mBlacklistFragment == null) {
-                    mBlacklistFragment = BlacklistFragment.newInstance("mBlacklistFragment");
-                    transaction.add(R.id.tb, mBlacklistFragment);
-                } else {
-                    transaction.show(mBlacklistFragment);
-                }
-//                    mMusicNumberBadgeItem.hide();
-                break;
-            case 3:
                 if (mMeFragment == null) {
                     mMeFragment = MeFragment.newInstance("mMeFragment");
                     transaction.add(R.id.tb, mMeFragment);
@@ -182,9 +215,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         if (mRubbishBoxFragment != null) {
             transaction.hide(mRubbishBoxFragment);
         }
-        if (mBlacklistFragment != null) {
-            transaction.hide(mBlacklistFragment);
-        }
         if (mMeFragment != null) {
             transaction.hide(mMeFragment);
         }
@@ -201,8 +231,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             mInboxFragment = (InboxFragment) fragment;
         } else if (mRubbishBoxFragment == null && fragment instanceof RubbishBoxFragment) {
             mRubbishBoxFragment = (RubbishBoxFragment) fragment;
-        } else if (mBlacklistFragment == null && fragment instanceof BlacklistFragment) {
-            mBlacklistFragment = (BlacklistFragment) fragment;
         } else if (mMeFragment == null && fragment instanceof MeFragment) {
             mMeFragment = (MeFragment) fragment;
         }
@@ -227,5 +255,180 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             finish();
             System.exit(0);
         }
+    }
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main2, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+            startNewActivity(TagMangerActivity.class, false);
+        } else if (id == R.id.nav_gallery) {
+            String content = "论文积分借款遛狗别墅特殊";
+            String sender = "狗蛋er";
+            String timedate = "我叫时间";
+            int type = 1;
+            for (int i = 0; i < queryDataL().size(); i++) {
+                if (content.contains(queryDataL().get(i).getKeyword())) {
+                    insertData(sender, content, timedate, 0);
+                    type = 0;
+                    break;
+                }
+            }
+            if (type == 1) {
+                String content2 = FilterUtil.format(content);//去掉标点符号
+                String ltp = LtpCloud.split(content2);//分词
+                String[] s = ltp.split(" ");//截取根据" "分的词语
+
+                double bayes1 = 1;
+                double bayes2 = 1;
+                for (int i = 0; i < s.length; i++) {//循环，计算每个词语出现的次数，计算概率，加入到数据库
+                    //条件概率
+                    WhiteWordDao whiteWordDao = BaseApplication.getInstance().getDaoSession().getWhiteWordDao();
+                    BlackWordDao blackWordDao = BaseApplication.getInstance().getDaoSession().getBlackWordDao();
+                    List<WhiteWord> whiteWordsList = whiteWordDao.
+                            queryBuilder()
+                            .where(WhiteWordDao.Properties.Keyword.eq(s[i])).build().list();
+                    List<BlackWord> blackWordsList = blackWordDao.
+                            queryBuilder()
+                            .where(BlackWordDao.Properties.Keyword.eq(s[i])).list();
+
+                    double white, black;
+                    if (whiteWordsList.size() > 0) {
+                        white = (double) whiteWordsList.get(0).getNumber() / 200;
+                    } else {
+                        white = 1;
+                    }
+                    if (blackWordsList.size() > 0) {
+                        black = (double) blackWordsList.get(0).getNumber() / 200;
+                    } else {
+                        black = 1;
+                    }
+                    String xxx = s[i];
+                    double p = white / (white + black);//出现这个词时，该短信为垃圾短信的概率
+
+                    //全概率
+                    bayes1 = bayes1 * p;
+                    bayes2 = bayes2 * (1 - p);
+                }
+                double p = bayes1 / (bayes1 + bayes2);//复合概率
+                if (p > 0.8) {
+                    insertData(sender, content, timedate, 0);
+                } else {
+                    insertData(sender, content, timedate, 1);
+                }
+//                        .show();
+//                String timedate = DateUtils.timedate(String.valueOf(msgDate));
+//                insertData(sender, content, timedate);
+
+
+//                String smsToast = "New SMS received from : "
+//                        + sender + "\n'"
+//                        + content + "'" + xxxx + sdsdsd;
+//                Toast.makeText(context, smsToast, Toast.LENGTH_LONG)
+//                        .show();
+//                Log.d(TAG, "message from: " + sender + ", message body: " + content
+//                        + ", message date: " + msgDate);
+                //自己的逻辑
+            }
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+            String xxxx = LtpCloud.split("乐视网公告称，孙宏斌因工作安排调整原因向公司申请辞去乐视网董事长职务，退出董事会，并不再在乐视网担任任何职务。公司董事会充分尊重孙宏斌的个人意愿，接受其辞职申请。孙宏斌原定任期至2018年10月13日");
+            Toast.makeText(this, xxxx, Toast.LENGTH_SHORT).show();
+//            SnackbarUtil.showShortSnackbar(mParent, xxxx, SnackbarUtil.WHITE, SnackbarUtil.GREEN);
+//            logout(MainActivity.this);
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    class MyTask extends AsyncTask<Integer, Integer, String> {
+
+        @Override
+        protected String doInBackground(Integer... integers) {
+            SharePreferenceUtil.saveInfo(MainActivity.this, SharePreferenceUtil.BLACKNUM, "200");//黑名单
+            SharePreferenceUtil.saveInfo(MainActivity.this, SharePreferenceUtil.WHITENUM, "200");//白名单
+            //查
+            WhiteWordDao smsDao = BaseApplication.getInstance().getDaoSession().getWhiteWordDao();
+            List<WhiteWord> users = smsDao.loadAll();
+            if (users.size() <= 0) {
+                FilterUtil.getBlackList(0);
+                FilterUtil.getBlackList(1);
+            }
+            return "fuck";
+        }
+    }
+
+    private Long queryData() {
+        UserDao mUserDao = BaseApplication.getInstance().getDaoSession().getUserDao();
+        List<User> users = mUserDao.loadAll();
+        Long id = null;
+        String phone = SharePreferenceUtil.getInfo(BaseApplication.getContext(), SharePreferenceUtil.PHONE);
+        for (int i = 0; i < users.size(); i++) {
+            if (phone.equals(users.get(i).getPhone())) {
+                id = users.get(i).getId();
+                break;
+            }
+        }
+        return id;
+    }
+
+//查
+
+    private List<KeyWord> queryDataL() {
+        KeyWordDao keyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
+        Long id = SharePreferenceUtil.getInfoLong(BaseApplication.getContext(), SharePreferenceUtil.ID);
+        List<KeyWord> users = keyWordDao.
+                queryBuilder()
+                .where(KeyWordDao.Properties.Id.eq(String.valueOf(id))).list();
+        return users;
+    }
+    //增
+
+    private void insertData(String sender, String content, String time, int userfulType) {
+        SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
+        SMS insertData = new SMS(null,queryData(), sender, content, time, 0, userfulType);
+        smsDao.insert(insertData);
     }
 }
