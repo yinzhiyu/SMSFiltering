@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.smsfiltering.R;
 import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.greendao.SMSDao;
+import com.example.smsfiltering.modules.fragment.RubbishBoxFragment;
 import com.example.smsfiltering.table.SMS;
 
 import java.util.List;
@@ -25,16 +26,11 @@ public class RubbishAdapter extends RecyclerView.Adapter {
     private final Context mContext;
     private IndoxHolder IndoxHolder;
     private List<SMS> list;
-
-    private DelRefreshInterface mDelRefresh;
-
+    private OnListener mOnListener;
     public RubbishAdapter(Context context, List<SMS> list) {
         this.list = list;
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
-    }
-    public void setCallback(DelRefreshInterface callBack) {
-        this.mDelRefresh = callBack;
     }
     public void notifityData(List<SMS> list) {
         if (list != null && list.size() > 0) {
@@ -44,7 +40,10 @@ public class RubbishAdapter extends RecyclerView.Adapter {
             Toast.makeText(mContext, "没有更多数据...", Toast.LENGTH_SHORT).show();
         }
     }
-
+    //    给接口变量赋值
+    public void setCallback(OnListener callBack) {
+        this.mOnListener = callBack;
+    }
     @Override
     public IndoxHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
@@ -82,7 +81,8 @@ public class RubbishAdapter extends RecyclerView.Adapter {
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
                                     smsDao.delete(sms);
-                                    mDelRefresh.refreshRubbish();
+                                    mOnListener.onRListener();
+
                                 }
                             })
                             .show();

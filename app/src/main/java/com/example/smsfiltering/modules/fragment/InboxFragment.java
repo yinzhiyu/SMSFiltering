@@ -17,8 +17,8 @@ import com.example.smsfiltering.R;
 import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.base.BaseFragment;
 import com.example.smsfiltering.greendao.SMSDao;
-import com.example.smsfiltering.modules.adapter.DelRefreshInterface;
 import com.example.smsfiltering.modules.adapter.InboxAdapter;
+import com.example.smsfiltering.modules.adapter.OnListener;
 import com.example.smsfiltering.table.SMS;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
 import com.example.smsfiltering.view.DividerListItemDecoration;
@@ -33,7 +33,7 @@ import butterknife.OnClick;
  * 收件箱BlacklistFragment
  */
 
-public class InboxFragment extends BaseFragment implements DelRefreshInterface {
+public class InboxFragment extends BaseFragment implements OnListener {
     @BindView(R.id.rv_home_recycler)
     RecyclerView rvHomeRecycler;
     @BindView(R.id.srl_home_swipe_refresh)
@@ -57,9 +57,6 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
         InboxFragment fragment = new InboxFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public InboxFragment() {
     }
 
     @Nullable
@@ -110,7 +107,13 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
             }
         });
         setLayoutManager();
-        getData(pageNum);
+    }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            getData(pageNum);
+        }
     }
 
     @Override
@@ -131,7 +134,7 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
                 mLlNull.setVisibility(View.GONE);
                 srlHomeSwipeRefresh.setVisibility(View.VISIBLE);
                 mInboxAdapter = new InboxAdapter(getActivity(), smsList);
-                mInboxAdapter.setCallback(new InboxFragment());
+                mInboxAdapter.setCallback(this);
                 rvHomeRecycler.setAdapter(mInboxAdapter);
             } else {
                 srlHomeSwipeRefresh.setVisibility(View.GONE);
@@ -226,13 +229,12 @@ public class InboxFragment extends BaseFragment implements DelRefreshInterface {
     }
 
     @Override
-    public void refreshRubbish() {
-
-    }
-
-    @Override
-    public void refreshInbox() {
+    public void onIListener() {
         getData(pageNum);
     }
 
+    @Override
+    public void onRListener() {
+
+    }
 }

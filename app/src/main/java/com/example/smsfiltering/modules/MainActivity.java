@@ -29,6 +29,7 @@ import com.example.smsfiltering.greendao.SMSDao;
 import com.example.smsfiltering.greendao.UserDao;
 import com.example.smsfiltering.greendao.WhiteWordDao;
 import com.example.smsfiltering.http.LtpCloud;
+import com.example.smsfiltering.modules.adapter.OnListener;
 import com.example.smsfiltering.modules.fragment.InboxFragment;
 import com.example.smsfiltering.modules.fragment.MeFragment;
 import com.example.smsfiltering.modules.fragment.RubbishBoxFragment;
@@ -49,7 +50,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationBar.OnTabSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationBar.OnTabSelectedListener{
 
     @BindView(R.id.tb)
     FrameLayout mTb;
@@ -165,6 +166,7 @@ public class MainActivity extends BaseActivity
                     mInboxFragment = InboxFragment.newInstance("");
                     transaction.add(R.id.tb, mInboxFragment);
                 } else {
+                    mInboxFragment.onResume();
                     transaction.show(mInboxFragment);
                 }
 //                mHomeNumberBadgeItem.hide();
@@ -174,6 +176,7 @@ public class MainActivity extends BaseActivity
                     mRubbishBoxFragment = RubbishBoxFragment.newInstance("");
                     transaction.add(R.id.tb, mRubbishBoxFragment);
                 } else {
+                    mRubbishBoxFragment.onResume();
                     transaction.show(mRubbishBoxFragment);
                 }
                 break;

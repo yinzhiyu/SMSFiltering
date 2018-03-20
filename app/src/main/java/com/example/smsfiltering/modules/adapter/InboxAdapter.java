@@ -25,14 +25,12 @@ public class InboxAdapter extends RecyclerView.Adapter {
     private final Context mContext;
     private IndoxHolder IndoxHolder;
     private List<SMS> list;
-    private DelRefreshInterface mDelRefresh;
+    private OnListener mOnListener;
+
     public InboxAdapter(Context context, List<SMS> list) {
         this.list = list;
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
-    }
-    public void setCallback(DelRefreshInterface callBack) {
-        this.mDelRefresh = callBack;
     }
     public void notifityData(List<SMS> list) {
         if (list != null && list.size() > 0) {
@@ -43,6 +41,10 @@ public class InboxAdapter extends RecyclerView.Adapter {
         }
     }
 
+    //    给接口变量赋值
+    public void setCallback(OnListener callBack) {
+        this.mOnListener = callBack;
+    }
     @Override
     public IndoxHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
@@ -80,7 +82,9 @@ public class InboxAdapter extends RecyclerView.Adapter {
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
                                     smsDao.delete(sms);
-                                    mDelRefresh.refreshInbox();
+                                    mOnListener.onIListener();
+
+
                                 }
                             })
                             .show();

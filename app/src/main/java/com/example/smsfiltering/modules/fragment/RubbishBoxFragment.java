@@ -17,7 +17,7 @@ import com.example.smsfiltering.R;
 import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.base.BaseFragment;
 import com.example.smsfiltering.greendao.SMSDao;
-import com.example.smsfiltering.modules.adapter.DelRefreshInterface;
+import com.example.smsfiltering.modules.adapter.OnListener;
 import com.example.smsfiltering.modules.adapter.RubbishAdapter;
 import com.example.smsfiltering.table.SMS;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
@@ -33,7 +33,7 @@ import butterknife.OnClick;
  * 垃圾箱
  */
 
-public class RubbishBoxFragment extends BaseFragment implements DelRefreshInterface {
+public class RubbishBoxFragment extends BaseFragment implements OnListener {
     @BindView(R.id.rv_home_recycler)
     RecyclerView rvHomeRecycler;
     @BindView(R.id.srl_home_swipe_refresh)
@@ -56,9 +56,6 @@ public class RubbishBoxFragment extends BaseFragment implements DelRefreshInterf
         RubbishBoxFragment fragment = new RubbishBoxFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public RubbishBoxFragment() {
     }
 
     @Nullable
@@ -109,7 +106,6 @@ public class RubbishBoxFragment extends BaseFragment implements DelRefreshInterf
             }
         });
         setLayoutManager();
-        getData(pageNum);
     }
 
     @Override
@@ -131,7 +127,7 @@ public class RubbishBoxFragment extends BaseFragment implements DelRefreshInterf
                 mLlNull.setVisibility(View.GONE);
                 srlHomeSwipeRefresh.setVisibility(View.VISIBLE);
                 mRubbishAdapter = new RubbishAdapter(getActivity(), smsList);
-                mRubbishAdapter.setCallback(new RubbishBoxFragment());
+                mRubbishAdapter.setCallback(this);
                 rvHomeRecycler.setAdapter(mRubbishAdapter);
             } else {
                 srlHomeSwipeRefresh.setVisibility(View.GONE);
@@ -224,14 +220,14 @@ public class RubbishBoxFragment extends BaseFragment implements DelRefreshInterf
         rvHomeRecycler.addItemDecoration(new DividerListItemDecoration(getActivity(), R.drawable.shape_divide_line));
     }
 
+
     @Override
-    public void refreshRubbish() {
+    public void onIListener() {
+
+    }
+
+    @Override
+    public void onRListener() {
         getData(pageNum);
     }
-
-    @Override
-    public void refreshInbox() {
-
-    }
-
 }
