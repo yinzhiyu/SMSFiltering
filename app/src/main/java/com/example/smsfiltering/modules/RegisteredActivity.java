@@ -95,7 +95,6 @@ public class RegisteredActivity extends BaseActivity {
         SharePreferenceUtil.saveInfo2(BaseApplication.getContext(), SharePreferenceUtil.ALIAS, true);
         SharePreferenceUtil.saveInfo(BaseApplication.getContext(), SharePreferenceUtil.PHONE, phone);
         SharePreferenceUtil.saveInfo(BaseApplication.getContext(), SharePreferenceUtil.PWD, password);
-        SharePreferenceUtil.saveInfoLong(BaseApplication.getContext(), SharePreferenceUtil.ID, id);
         startNewActivity(MainActivity.class, true);
     }
 

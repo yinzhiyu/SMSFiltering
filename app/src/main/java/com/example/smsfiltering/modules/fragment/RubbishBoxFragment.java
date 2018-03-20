@@ -1,6 +1,7 @@
 package com.example.smsfiltering.modules.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,6 +14,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.smsfiltering.R;
 import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.base.BaseFragment;
@@ -20,6 +23,7 @@ import com.example.smsfiltering.greendao.SMSDao;
 import com.example.smsfiltering.modules.adapter.OnListener;
 import com.example.smsfiltering.modules.adapter.RubbishAdapter;
 import com.example.smsfiltering.table.SMS;
+import com.example.smsfiltering.utils.RecyclerViewClickListener;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
 import com.example.smsfiltering.view.DividerListItemDecoration;
 
@@ -49,7 +53,7 @@ public class RubbishBoxFragment extends BaseFragment implements OnListener {
     private int totalScrollDistance;
     private int pageNum = 1;
     private RubbishAdapter mRubbishAdapter;
-
+    private List<SMS> smsList;
     public static RubbishBoxFragment newInstance(String content) {
         Bundle args = new Bundle();
         args.putString("ARGS", content);
@@ -82,6 +86,34 @@ public class RubbishBoxFragment extends BaseFragment implements OnListener {
             }
         });
 //        recycleScroll();
+        rvHomeRecycler.addOnItemTouchListener(new RecyclerViewClickListener(getActivity(), rvHomeRecycler,
+                new RecyclerViewClickListener.OnItemClickListener() {
+
+                    @Override
+                    public void onItemLongClick(View view, final int position) {
+                        new MaterialDialog.Builder(mContext)
+                                .content("移动收件箱？")
+                                .positiveText("再看看")
+                                .negativeText("确定")
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                                    }
+                                })
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
+                                        SMS sms = smsDao.queryBuilder().where(SMSDao.Properties.SmsId.eq(smsList.get(position).getSmsId())).build().unique();
+                                        sms.setUsefulType(1);
+                                        smsDao.update(sms);
+                                        getData(pageNum);
+                                    }
+                                })
+                                .show();
+                    }
+                }));
         rvHomeRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -116,7 +148,7 @@ public class RubbishBoxFragment extends BaseFragment implements OnListener {
 
     private void getData(int num) {
         SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
-        List<SMS> smsList = smsDao.queryBuilder()
+        smsList = smsDao.queryBuilder()
 //                .where(SMSDao.Properties.Id.eq(SharePreferenceUtil.getInfoLong(getActivity(), SharePreferenceUtil.ID)), SMSDao.Properties.UsefulType.eq("0")).limit(Integer.parseInt(num + "0")).build().list();
                 .where(SMSDao.Properties.Id.eq(SharePreferenceUtil.getInfoLong(getActivity(), SharePreferenceUtil.ID)), SMSDao.Properties.UsefulType.eq("0")).build().list();
         if (srlHomeSwipeRefresh != null) {

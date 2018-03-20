@@ -39,6 +39,7 @@ import com.example.smsfiltering.table.KeyWord;
 import com.example.smsfiltering.table.SMS;
 import com.example.smsfiltering.table.User;
 import com.example.smsfiltering.table.WhiteWord;
+import com.example.smsfiltering.utils.DBUtil;
 import com.example.smsfiltering.utils.FilterUtil;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
 import com.example.smsfiltering.utils.SnackbarUtil;
@@ -375,10 +376,10 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-            String xxxx = LtpCloud.split("乐视网公告称，孙宏斌因工作安排调整原因向公司申请辞去乐视网董事长职务，退出董事会，并不再在乐视网担任任何职务。公司董事会充分尊重孙宏斌的个人意愿，接受其辞职申请。孙宏斌原定任期至2018年10月13日");
-            Toast.makeText(this, xxxx, Toast.LENGTH_SHORT).show();
+//            String xxxx = LtpCloud.split("乐视网公告称，孙宏斌因工作安排调整原因向公司申请辞去乐视网董事长职务，退出董事会，并不再在乐视网担任任何职务。公司董事会充分尊重孙宏斌的个人意愿，接受其辞职申请。孙宏斌原定任期至2018年10月13日");
+//            Toast.makeText(this, xxxx, Toast.LENGTH_SHORT).show();
 //            SnackbarUtil.showShortSnackbar(mParent, xxxx, SnackbarUtil.WHITE, SnackbarUtil.GREEN);
-//            logout(MainActivity.this);
+            logout(MainActivity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -390,6 +391,8 @@ public class MainActivity extends BaseActivity
 
         @Override
         protected String doInBackground(Integer... integers) {
+            Long id = DBUtil.queryData();
+            SharePreferenceUtil.saveInfoLong(BaseApplication.getContext(), SharePreferenceUtil.ID, id);
             SharePreferenceUtil.saveInfo(MainActivity.this, SharePreferenceUtil.BLACKNUM, "200");//黑名单
             SharePreferenceUtil.saveInfo(MainActivity.this, SharePreferenceUtil.WHITENUM, "200");//白名单
             //查
