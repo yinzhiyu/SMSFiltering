@@ -14,11 +14,6 @@ import com.example.smsfiltering.utils.ActivityCollector;
 import com.example.smsfiltering.utils.CommonUtil;
 import com.example.smsfiltering.utils.FilterUtil;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
-
-/**
- * Created by yinzhiyu on 2018-3-13.
- */
-
 public class BaseActivity extends AppCompatActivity {
     protected Context mContext;
     @Override

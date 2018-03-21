@@ -34,6 +34,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * 关键字管理
+ */
 public class TagMangerActivity extends AppCompatActivity {
 
 

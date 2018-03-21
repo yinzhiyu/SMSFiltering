@@ -13,4 +13,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">长按短信将移到收件箱！</string>
+    <string name="splash">启动页</string>
+    <string name="register">注册页</string>
+    <string name="login">登录页</string>
+    <string name="tag_manger">关键字管理</string>
 </resources>

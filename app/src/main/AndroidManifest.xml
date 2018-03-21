@@ -15,6 +15,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".modules.SplashActivity"
+            android:label="@string/splash"
             android:theme="@style/AppTheme.Full">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,8 +37,10 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".modules.RegisteredActivity" />
-        <activity android:name=".modules.LoginActivity" />
+        <activity android:name=".modules.RegisteredActivity"
+            android:label="@string/register" />
+        <activity android:name=".modules.LoginActivity"
+            android:label="@string/login" />
         <activity
             android:name=".modules.BottomActivity"
             android:label="@string/title_activity_bottom" />
@@ -45,7 +48,8 @@
             android:name=".modules.MainActivity"
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme" />
-        <activity android:name=".modules.tag.TagMangerActivity"></activity>
+        <activity android:name=".modules.tag.TagMangerActivity"
+            android:label="@string/tag_manger"/>
     </application>
 
 </manifest>

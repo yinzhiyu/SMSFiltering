@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-/**
- * Created by yinzhiyu on 2018-3-14.
- */
 
 public class HttpConnectLtp extends Thread{
 

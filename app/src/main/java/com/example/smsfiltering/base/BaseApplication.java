@@ -7,9 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.smsfiltering.greendao.DaoMaster;
 import com.example.smsfiltering.greendao.DaoSession;
 
-/**
- * Created by si on 2018-3-13.
- */
 
 public class BaseApplication extends Application {
     private static BaseApplication instance;

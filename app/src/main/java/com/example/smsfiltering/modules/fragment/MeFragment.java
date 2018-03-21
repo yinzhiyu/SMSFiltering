@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by yinzhiyu on 2018-3-14.
+ * 其他
  */
 
 public class MeFragment extends BaseFragment {
