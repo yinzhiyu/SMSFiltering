@@ -92,7 +92,7 @@ public class RubbishBoxFragment extends BaseFragment implements OnListener {
                     @Override
                     public void onItemLongClick(View view, final int position) {
                         new MaterialDialog.Builder(mContext)
-                                .content("移动收件箱？")
+                                .content("移到收件箱？")
                                 .positiveText("再看看")
                                 .negativeText("确定")
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
