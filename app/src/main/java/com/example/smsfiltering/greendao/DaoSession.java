@@ -10,12 +10,14 @@ import org.greenrobot.greendao.internal.DaoConfig;
 
 import com.example.smsfiltering.table.BlackWord;
 import com.example.smsfiltering.table.KeyWord;
+import com.example.smsfiltering.table.Phone;
 import com.example.smsfiltering.table.SMS;
 import com.example.smsfiltering.table.User;
 import com.example.smsfiltering.table.WhiteWord;
 
 import com.example.smsfiltering.greendao.BlackWordDao;
 import com.example.smsfiltering.greendao.KeyWordDao;
+import com.example.smsfiltering.greendao.PhoneDao;
 import com.example.smsfiltering.greendao.SMSDao;
 import com.example.smsfiltering.greendao.UserDao;
 import com.example.smsfiltering.greendao.WhiteWordDao;
@@ -31,12 +33,14 @@ public class DaoSession extends AbstractDaoSession {
 
     private final DaoConfig blackWordDaoConfig;
     private final DaoConfig keyWordDaoConfig;
+    private final DaoConfig phoneDaoConfig;
     private final DaoConfig sMSDaoConfig;
     private final DaoConfig userDaoConfig;
     private final DaoConfig whiteWordDaoConfig;
 
     private final BlackWordDao blackWordDao;
     private final KeyWordDao keyWordDao;
+    private final PhoneDao phoneDao;
     private final SMSDao sMSDao;
     private final UserDao userDao;
     private final WhiteWordDao whiteWordDao;
@@ -51,6 +55,9 @@ public class DaoSession extends AbstractDaoSession {
         keyWordDaoConfig = daoConfigMap.get(KeyWordDao.class).clone();
         keyWordDaoConfig.initIdentityScope(type);
 
+        phoneDaoConfig = daoConfigMap.get(PhoneDao.class).clone();
+        phoneDaoConfig.initIdentityScope(type);
+
         sMSDaoConfig = daoConfigMap.get(SMSDao.class).clone();
         sMSDaoConfig.initIdentityScope(type);
 
@@ -62,12 +69,14 @@ public class DaoSession extends AbstractDaoSession {
 
         blackWordDao = new BlackWordDao(blackWordDaoConfig, this);
         keyWordDao = new KeyWordDao(keyWordDaoConfig, this);
+        phoneDao = new PhoneDao(phoneDaoConfig, this);
         sMSDao = new SMSDao(sMSDaoConfig, this);
         userDao = new UserDao(userDaoConfig, this);
         whiteWordDao = new WhiteWordDao(whiteWordDaoConfig, this);
 
         registerDao(BlackWord.class, blackWordDao);
         registerDao(KeyWord.class, keyWordDao);
+        registerDao(Phone.class, phoneDao);
         registerDao(SMS.class, sMSDao);
         registerDao(User.class, userDao);
         registerDao(WhiteWord.class, whiteWordDao);
@@ -76,6 +85,7 @@ public class DaoSession extends AbstractDaoSession {
     public void clear() {
         blackWordDaoConfig.clearIdentityScope();
         keyWordDaoConfig.clearIdentityScope();
+        phoneDaoConfig.clearIdentityScope();
         sMSDaoConfig.clearIdentityScope();
         userDaoConfig.clearIdentityScope();
         whiteWordDaoConfig.clearIdentityScope();
@@ -87,6 +97,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public KeyWordDao getKeyWordDao() {
         return keyWordDao;
+    }
+
+    public PhoneDao getPhoneDao() {
+        return phoneDao;
     }
 
     public SMSDao getSMSDao() {

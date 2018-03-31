@@ -37,9 +37,11 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".modules.RegisteredActivity"
+        <activity
+            android:name=".modules.RegisteredActivity"
             android:label="@string/register" />
-        <activity android:name=".modules.LoginActivity"
+        <activity
+            android:name=".modules.LoginActivity"
             android:label="@string/login" />
         <activity
             android:name=".modules.BottomActivity"
@@ -48,8 +50,13 @@
             android:name=".modules.MainActivity"
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme" />
-        <activity android:name=".modules.tag.TagMangerActivity"
-            android:label="@string/tag_manger"/>
+        <activity
+            android:name=".modules.tag.TagMangerActivity"
+            android:label="@string/tag_manger" />
+        <activity
+            android:name=".modules.fragment.PhoneFragment"
+            android:label="@string/title_activity_"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

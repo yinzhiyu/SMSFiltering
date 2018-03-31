@@ -32,6 +32,7 @@ import com.example.smsfiltering.http.LtpCloud;
 import com.example.smsfiltering.modules.adapter.OnListener;
 import com.example.smsfiltering.modules.fragment.InboxFragment;
 import com.example.smsfiltering.modules.fragment.MeFragment;
+import com.example.smsfiltering.modules.fragment.PhoneFragment;
 import com.example.smsfiltering.modules.fragment.RubbishBoxFragment;
 import com.example.smsfiltering.modules.tag.TagMangerActivity;
 import com.example.smsfiltering.table.BlackWord;
@@ -61,6 +62,7 @@ public class MainActivity extends BaseActivity
     AutoLinearLayout mParent;
 
     private FragmentManager mFragmentManager;
+    private PhoneFragment phoneFragment;
     //      private BadgeItem mHomeNumberBadgeItem, mMusicNumberBadgeItem;
     private InboxFragment mInboxFragment;
     private RubbishBoxFragment mRubbishBoxFragment;
@@ -126,6 +128,7 @@ public class MainActivity extends BaseActivity
         bottomNavigationBar
                 .addItem(new BottomNavigationItem(R.drawable.home_s, "收件箱").setInactiveIcon(getResources().getDrawable(R.drawable.home_n)))
                 .addItem(new BottomNavigationItem(R.drawable.touzi_s, "垃圾箱").setInactiveIcon(getResources().getDrawable(R.drawable.touzi_n)))
+                .addItem(new BottomNavigationItem(R.drawable.wode_s, "黑名单").setInactiveIcon(getResources().getDrawable(R.drawable.wode_n)))
                 .addItem(new BottomNavigationItem(R.drawable.gengduo_s, "其他").setInactiveIcon(getResources().getDrawable(R.drawable.gengduo_n)))
                 .setFirstSelectedPosition(lastSelectedPosition)
                 .initialise();
@@ -182,6 +185,14 @@ public class MainActivity extends BaseActivity
                 }
                 break;
             case 2:
+                if (phoneFragment == null) {
+                    phoneFragment = PhoneFragment.newInstance("phoneFragment");
+                    transaction.add(R.id.tb, phoneFragment);
+                } else {
+                    transaction.show(phoneFragment);
+                }
+                break;
+            case 3:
                 if (mMeFragment == null) {
                     mMeFragment = MeFragment.newInstance("mMeFragment");
                     transaction.add(R.id.tb, mMeFragment);
@@ -222,6 +233,9 @@ public class MainActivity extends BaseActivity
         if (mMeFragment != null) {
             transaction.hide(mMeFragment);
         }
+        if (phoneFragment != null) {
+            transaction.hide(phoneFragment);
+        }
     }
 
 
@@ -235,6 +249,8 @@ public class MainActivity extends BaseActivity
             mInboxFragment = (InboxFragment) fragment;
         } else if (mRubbishBoxFragment == null && fragment instanceof RubbishBoxFragment) {
             mRubbishBoxFragment = (RubbishBoxFragment) fragment;
+        } else if (phoneFragment == null && fragment instanceof PhoneFragment) {
+            phoneFragment = (PhoneFragment) fragment;
         } else if (mMeFragment == null && fragment instanceof MeFragment) {
             mMeFragment = (MeFragment) fragment;
         }

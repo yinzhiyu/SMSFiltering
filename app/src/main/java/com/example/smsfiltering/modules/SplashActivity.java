@@ -20,14 +20,13 @@ public class SplashActivity extends BaseActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                SharePreferenceUtil.saveInfo2(SplashActivity.this, SharePreferenceUtil.ALIAS, false);
-                if (SharePreferenceUtil.getInfo1(BaseApplication.getContext(), SharePreferenceUtil.ALIAS)) {
+                    if (SharePreferenceUtil.getInfo1(BaseApplication.getContext(), SharePreferenceUtil.ALIAS)) {
 //                    startNewActivity(MainActivity.class, true);
-                    startNewActivity(MainActivity.class, true);
-                } else {
-                    startNewActivity(LoginActivity.class, true);
-                }
-                finish();
+                        startNewActivity(MainActivity.class, true);
+                    } else {
+                        startNewActivity(LoginActivity.class, true);
+                    }
+                    finish();
             }
         }, time);
     }

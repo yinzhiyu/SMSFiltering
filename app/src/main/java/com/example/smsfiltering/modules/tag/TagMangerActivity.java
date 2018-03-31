@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.smsfiltering.R;
 import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.greendao.KeyWordDao;
+import com.example.smsfiltering.greendao.PhoneDao;
 import com.example.smsfiltering.table.KeyWord;
 import com.example.smsfiltering.utils.SharePreferenceUtil;
 import com.example.smsfiltering.utils.SnackbarUtil;
@@ -60,6 +61,7 @@ public class TagMangerActivity extends AppCompatActivity {
     LinearLayout mParent;
 
     private List<KeyWord> smsList;
+    private  KeyWordDao keyWordDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,8 +106,10 @@ public class TagMangerActivity extends AppCompatActivity {
         search_page_flowlayout.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
             @Override
             public boolean onTagClick(View view, int position, FlowLayout parent) {
-                Toast.makeText(TagMangerActivity.this, mVals.get(position).getKeyword(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TagMangerActivity.this, "fff"+mVals.get(position).getKeyword(), Toast.LENGTH_SHORT).show();
                 //view.setVisibility(View.GONE);
+                KeyWord keyWord = smsList.get(position);
+                keyWordDao.delete(keyWord);
                 return true;
             }
         });
@@ -118,7 +122,7 @@ public class TagMangerActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        KeyWordDao keyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
+        keyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
         smsList = keyWordDao.loadAll();
         initView(smsList);
 //        myAdapter = new MyAdapter(TagMangerActivity.this, smsList);

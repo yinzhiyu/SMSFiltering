@@ -237,4 +237,9 @@ public class InboxFragment extends BaseFragment implements OnListener {
     public void onRListener() {
 
     }
+
+    @Override
+    public void onPListener() {
+
+    }
 }

@@ -17,4 +17,5 @@
     <string name="register">注册页</string>
     <string name="login">登录页</string>
     <string name="tag_manger">关键字管理</string>
+    <string name="title_activity_">Activity</string>
 </resources>

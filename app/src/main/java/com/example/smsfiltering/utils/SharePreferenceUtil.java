@@ -88,7 +88,7 @@ public class SharePreferenceUtil {
         Boolean translation;
         SharedPreferences preferences;
         preferences = mContext.getSharedPreferences("optimization", context.MODE_PRIVATE);
-        translation = preferences.getBoolean(key, true);
+        translation = preferences.getBoolean(key, false);
         return translation;
     }
 

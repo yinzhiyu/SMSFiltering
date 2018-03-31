@@ -262,4 +262,9 @@ public class RubbishBoxFragment extends BaseFragment implements OnListener {
     public void onRListener() {
         getData(pageNum);
     }
+
+    @Override
+    public void onPListener() {
+
+    }
 }

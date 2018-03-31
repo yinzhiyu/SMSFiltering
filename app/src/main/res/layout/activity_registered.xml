@@ -92,6 +92,14 @@
             <!--android:layout_marginRight="10dp"-->
             <!--android:paddingTop="9dp"-->
             <!--android:src="@drawable/btn_nosee" />-->
+        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:background="@drawable/layer_line"
+                android:orientation="vertical">
             <EditText
                 android:id="@+id/et_password_sure"
                 android:layout_width="match_parent"

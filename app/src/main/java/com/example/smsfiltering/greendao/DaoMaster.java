@@ -23,6 +23,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void createAllTables(Database db, boolean ifNotExists) {
         BlackWordDao.createTable(db, ifNotExists);
         KeyWordDao.createTable(db, ifNotExists);
+        PhoneDao.createTable(db, ifNotExists);
         SMSDao.createTable(db, ifNotExists);
         UserDao.createTable(db, ifNotExists);
         WhiteWordDao.createTable(db, ifNotExists);
@@ -32,6 +33,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void dropAllTables(Database db, boolean ifExists) {
         BlackWordDao.dropTable(db, ifExists);
         KeyWordDao.dropTable(db, ifExists);
+        PhoneDao.dropTable(db, ifExists);
         SMSDao.dropTable(db, ifExists);
         UserDao.dropTable(db, ifExists);
         WhiteWordDao.dropTable(db, ifExists);
@@ -55,6 +57,7 @@ public class DaoMaster extends AbstractDaoMaster {
         super(db, SCHEMA_VERSION);
         registerDaoClass(BlackWordDao.class);
         registerDaoClass(KeyWordDao.class);
+        registerDaoClass(PhoneDao.class);
         registerDaoClass(SMSDao.class);
         registerDaoClass(UserDao.class);
         registerDaoClass(WhiteWordDao.class);
