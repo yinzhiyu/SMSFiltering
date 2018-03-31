@@ -17,7 +17,7 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/shape_grey_border"
         android:gravity="top|left"
-        android:hint="期待您的宝贵意见和建议......"
+        android:hint="请输入测试短信内容......"
         android:padding="10dp"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
