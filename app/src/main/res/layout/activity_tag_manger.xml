@@ -52,7 +52,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="i am the best!  (click this will do nothing)"
+                android:text="点击关键字删除(click this will do nothing)"
                 android:textAllCaps="false" />
         </LinearLayout>
 

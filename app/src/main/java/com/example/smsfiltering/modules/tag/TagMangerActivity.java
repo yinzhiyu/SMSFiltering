@@ -61,7 +61,8 @@ public class TagMangerActivity extends AppCompatActivity {
     LinearLayout mParent;
 
     private List<KeyWord> smsList;
-    private  KeyWordDao keyWordDao;
+    private KeyWordDao keyWordDao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,10 +107,11 @@ public class TagMangerActivity extends AppCompatActivity {
         search_page_flowlayout.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
             @Override
             public boolean onTagClick(View view, int position, FlowLayout parent) {
-                Toast.makeText(TagMangerActivity.this, "fff"+mVals.get(position).getKeyword(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TagMangerActivity.this, "fff" + mVals.get(position).getKeyword(), Toast.LENGTH_SHORT).show();
                 //view.setVisibility(View.GONE);
                 KeyWord keyWord = smsList.get(position);
                 keyWordDao.delete(keyWord);
+                getData();
                 return true;
             }
         });
@@ -134,7 +136,7 @@ public class TagMangerActivity extends AppCompatActivity {
         KeyWordDao keyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
         String keyword = mEtKeywords.getText().toString().trim();
         if (!TextUtils.isEmpty(keyword)) {
-            KeyWord insertData = new KeyWord(id, keyword);
+            KeyWord insertData = new KeyWord(null,id, keyword);
             keyWordDao.insert(insertData);
 //            myAdapter = new MyAdapter(TagMangerActivity.this, smsList);
             getData();

@@ -15,7 +15,7 @@ import com.example.smsfiltering.table.KeyWord;
 /** 
  * DAO for table "KEY_WORD".
 */
-public class KeyWordDao extends AbstractDao<KeyWord, Void> {
+public class KeyWordDao extends AbstractDao<KeyWord, Long> {
 
     public static final String TABLENAME = "KEY_WORD";
 
@@ -24,8 +24,9 @@ public class KeyWordDao extends AbstractDao<KeyWord, Void> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, Long.class, "id", false, "ID");
-        public final static Property Keyword = new Property(1, String.class, "keyword", false, "KEYWORD");
+        public final static Property KeyId = new Property(0, Long.class, "keyId", true, "_id");
+        public final static Property Id = new Property(1, Long.class, "id", false, "ID");
+        public final static Property Keyword = new Property(2, String.class, "keyword", false, "KEYWORD");
     }
 
 
@@ -41,8 +42,9 @@ public class KeyWordDao extends AbstractDao<KeyWord, Void> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"KEY_WORD\" (" + //
-                "\"ID\" INTEGER," + // 0: id
-                "\"KEYWORD\" TEXT);"); // 1: keyword
+                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: keyId
+                "\"ID\" INTEGER," + // 1: id
+                "\"KEYWORD\" TEXT);"); // 2: keyword
     }
 
     /** Drops the underlying database table. */
@@ -55,14 +57,19 @@ public class KeyWordDao extends AbstractDao<KeyWord, Void> {
     protected final void bindValues(DatabaseStatement stmt, KeyWord entity) {
         stmt.clearBindings();
  
+        Long keyId = entity.getKeyId();
+        if (keyId != null) {
+            stmt.bindLong(1, keyId);
+        }
+ 
         Long id = entity.getId();
         if (id != null) {
-            stmt.bindLong(1, id);
+            stmt.bindLong(2, id);
         }
  
         String keyword = entity.getKeyword();
         if (keyword != null) {
-            stmt.bindString(2, keyword);
+            stmt.bindString(3, keyword);
         }
     }
 
@@ -70,52 +77,62 @@ public class KeyWordDao extends AbstractDao<KeyWord, Void> {
     protected final void bindValues(SQLiteStatement stmt, KeyWord entity) {
         stmt.clearBindings();
  
+        Long keyId = entity.getKeyId();
+        if (keyId != null) {
+            stmt.bindLong(1, keyId);
+        }
+ 
         Long id = entity.getId();
         if (id != null) {
-            stmt.bindLong(1, id);
+            stmt.bindLong(2, id);
         }
  
         String keyword = entity.getKeyword();
         if (keyword != null) {
-            stmt.bindString(2, keyword);
+            stmt.bindString(3, keyword);
         }
     }
 
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     @Override
     public KeyWord readEntity(Cursor cursor, int offset) {
         KeyWord entity = new KeyWord( //
-            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1) // keyword
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // keyId
+            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // id
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // keyword
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, KeyWord entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setKeyword(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setKeyId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
+        entity.setKeyword(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     
     @Override
-    protected final Void updateKeyAfterInsert(KeyWord entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected final Long updateKeyAfterInsert(KeyWord entity, long rowId) {
+        entity.setKeyId(rowId);
+        return rowId;
     }
     
     @Override
-    public Void getKey(KeyWord entity) {
-        return null;
+    public Long getKey(KeyWord entity) {
+        if(entity != null) {
+            return entity.getKeyId();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasKey(KeyWord entity) {
-        // TODO
-        return false;
+        return entity.getKeyId() != null;
     }
 
     @Override

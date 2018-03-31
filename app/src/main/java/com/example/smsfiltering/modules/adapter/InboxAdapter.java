@@ -19,11 +19,14 @@ import com.example.smsfiltering.table.SMS;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class InboxAdapter extends RecyclerView.Adapter {
     private final LayoutInflater mLayoutInflater;
     private final Context mContext;
-    private IndoxHolder IndoxHolder;
+    private ViewHolder viewHolder;
     private List<SMS> list;
     private OnListener mOnListener;
 
@@ -32,6 +35,7 @@ public class InboxAdapter extends RecyclerView.Adapter {
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
     }
+
     public void notifityData(List<SMS> list) {
         if (list != null && list.size() > 0) {
             this.list.addAll(list);
@@ -45,12 +49,13 @@ public class InboxAdapter extends RecyclerView.Adapter {
     public void setCallback(OnListener callBack) {
         this.mOnListener = callBack;
     }
+
     @Override
-    public IndoxHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        IndoxHolder holder;
+        ViewHolder holder;
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_fragment_indox, parent, false);
-        holder = new IndoxHolder(view);
+        holder = new ViewHolder(view);
         return holder;
     }
 
@@ -59,12 +64,12 @@ public class InboxAdapter extends RecyclerView.Adapter {
         holder.itemView.setTag(position);
         // 给ViewHolder设置元素
         final SMS sms = list.get(position);
-        if (holder instanceof IndoxHolder) {
-            IndoxHolder = (IndoxHolder) holder;
-            IndoxHolder.tv_sender.setText("发件人：" + sms.getSender());
-            IndoxHolder.tv_content.setText(sms.getContent());
-            IndoxHolder.tv_time.setText("时间：" + sms.getTime());
-            IndoxHolder.trash_can.setOnClickListener(new View.OnClickListener() {
+        if (holder instanceof ViewHolder) {
+            viewHolder = (ViewHolder) holder;
+            viewHolder.tvPhone.setText("发件人：" + sms.getSender());
+            viewHolder.tvContent.setText(sms.getContent());
+            viewHolder.tvTime.setText("时间：" + sms.getTime());
+            viewHolder.trashCan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     new MaterialDialog.Builder(mContext)
@@ -99,20 +104,19 @@ public class InboxAdapter extends RecyclerView.Adapter {
         return list.size();
     }
 
-    static class IndoxHolder extends RecyclerView.ViewHolder {
-        TextView tv_sender;
-        TextView tv_content;
-        TextView tv_time;
-        ImageView trash_can;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tv_phone)
+        TextView tvPhone;
+        @BindView(R.id.tv_content)
+        TextView tvContent;
+        @BindView(R.id.tv_time)
+        TextView tvTime;
+        @BindView(R.id.trash_can)
+        ImageView trashCan;
 
-        IndoxHolder(View view) {
+        ViewHolder(View view) {
             super(view);
-            tv_sender = (TextView) view.findViewById(R.id.tv_sender);
-            tv_content = (TextView) view.findViewById(R.id.tv_content);
-            tv_time = (TextView) view.findViewById(R.id.tv_time);
-            trash_can = (ImageView) view.findViewById(R.id.trash_can);
-
+            ButterKnife.bind(this, view);
         }
     }
-
 }
