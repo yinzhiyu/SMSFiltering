@@ -10,12 +10,14 @@ import android.util.Log;
 import com.example.smsfiltering.base.BaseApplication;
 import com.example.smsfiltering.greendao.BlackWordDao;
 import com.example.smsfiltering.greendao.KeyWordDao;
+import com.example.smsfiltering.greendao.PhoneDao;
 import com.example.smsfiltering.greendao.SMSDao;
 import com.example.smsfiltering.greendao.UserDao;
 import com.example.smsfiltering.greendao.WhiteWordDao;
 import com.example.smsfiltering.http.LtpCloud;
 import com.example.smsfiltering.table.BlackWord;
 import com.example.smsfiltering.table.KeyWord;
+import com.example.smsfiltering.table.Phone;
 import com.example.smsfiltering.table.SMS;
 import com.example.smsfiltering.table.User;
 import com.example.smsfiltering.table.WhiteWord;
@@ -28,6 +30,7 @@ import java.util.List;
 
 public class SMSReceiveandMask extends BroadcastReceiver {
     private String TAG = "smsreceiveandmask";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, ">>>>>>>onReceive start");
@@ -68,11 +71,20 @@ public class SMSReceiveandMask extends BroadcastReceiver {
                 long msgDate = message[0].getTimestampMillis();
                 String timedate = DateUtils.timedate(String.valueOf(msgDate));
                 int type = 1;
-                for (int i = 0; i < queryDataL().size(); i++) {
-                    if (content.contains(queryDataL().get(i).getKeyword())) {
+                for (int i = 0; i < queryDataP().size(); i++) {
+                    if (content.contains(queryDataP().get(i).getPhone())) {
                         insertData(sender, content, timedate, 0);
                         type = 0;
                         break;
+                    }
+                }
+                if (type == 1) {
+                    for (int i = 0; i < queryDataL().size(); i++) {
+                        if (content.contains(queryDataL().get(i).getKeyword())) {
+                            insertData(sender, content, timedate, 0);
+                            type = 0;
+                            break;
+                        }
                     }
                 }
                 if (type == 1) {
@@ -151,7 +163,7 @@ public class SMSReceiveandMask extends BroadcastReceiver {
         return id;
     }
 
-//查
+//查（黑名单关键字）
 
     private List<KeyWord> queryDataL() {
         KeyWordDao keyWordDao = BaseApplication.getInstance().getDaoSession().getKeyWordDao();
@@ -161,11 +173,20 @@ public class SMSReceiveandMask extends BroadcastReceiver {
                 .where(SMSDao.Properties.Id.eq(String.valueOf(id))).build().list();
         return users;
     }
+
+    private List<Phone> queryDataP() {
+        PhoneDao phoneDao = BaseApplication.getInstance().getDaoSession().getPhoneDao();
+        Long id = SharePreferenceUtil.getInfoLong(BaseApplication.getContext(), SharePreferenceUtil.ID);
+        List<Phone> phones = phoneDao.
+                queryBuilder()
+                .where(PhoneDao.Properties.Id.eq(String.valueOf(id))).build().list();
+        return phones;
+    }
     //增
 
     private void insertData(String sender, String content, String time, int userfulType) {
         SMSDao smsDao = BaseApplication.getInstance().getDaoSession().getSMSDao();
-        SMS insertData = new SMS(null,queryData(), sender, content, time, 0, userfulType);
+        SMS insertData = new SMS(null, queryData(), sender, content, time, 0, userfulType);
         smsDao.insert(insertData);
     }
 
